@@ -10,6 +10,8 @@ export interface Header {
 export interface Cell {
   value: string | number | Date | null;
   data_type: DataType;
+  sensitive_data?: boolean;
+  missing_data?: boolean;
 }
 
 export interface Row {

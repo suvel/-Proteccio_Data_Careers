@@ -97,7 +97,7 @@ export function parseFileToJson(filePath: string): ParsedFile {
     throw new Error(`File not found: ${filePath}`);
   }
 
-  const workbook = XLSX.readFile(filePath, { cellDates: true });
+  const workbook = XLSX.readFile(filePath, { cellDates: true, raw: true });
   const sheetName = workbook.SheetNames[0];
   const sheet = workbook.Sheets[sheetName];
 

@@ -77,6 +77,136 @@ Matches leading and/or trailing runs of underscores (used to trim them after slu
 | `age` | Fail (no match) | no leading/trailing underscores |
 | `a_g_e` | Fail (no match) | underscores only in the middle |
 
+## EMAIL_PATTERN
+
+```
+/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+```
+
+Matches a standard email address.
+
+| Input | Result | Reason |
+|---|---|---|
+| `jane.doe@example.com` | Pass | valid email |
+| `john+work@sub.domain.co.in` | Pass | valid email with subdomain and `+` tag |
+| `not-an-email` | Fail | no `@` |
+| `missing-at-sign.com` | Fail | no `@` |
+
+## PHONE_PATTERN
+
+```
+/^(?:\+91|0)?[6-9]\d{9}$/
+```
+
+Matches a 10-digit Indian mobile number, with an optional `+91` or leading `0` prefix.
+
+| Input | Result | Reason |
+|---|---|---|
+| `+919876543210` | Pass | `+91` prefix + valid 10-digit number |
+| `09876543210` | Pass | `0` prefix + valid 10-digit number |
+| `9876543210` | Pass | bare 10-digit number starting 6-9 |
+| `5876543210` | Fail | first digit not 6-9 |
+| `98765432` | Fail | too short |
+
+## NAME_PATTERN
+
+```
+/^[A-Z][a-zA-Z.\-']+(?:\s+[A-Z][a-zA-Z.\-']+)+$/
+```
+
+Matches a full name (two or more capitalized words), including initials and hyphenated/apostrophe surnames.
+
+| Input | Result | Reason |
+|---|---|---|
+| `John Smith` | Pass | first + last name |
+| `John K. Smith` | Pass | first name + initial + last name |
+| `Mary-Jane O'Brien` | Pass | hyphenated first name + apostrophe surname |
+| `John` | Fail | single word, no second capitalized word |
+| `john smith` | Fail | not capitalized |
+
+## AADHAR_PATTERN
+
+```
+/^[2-9]\d{11}$/
+```
+
+Matches a 12-digit Aadhaar number that does not start with 0 or 1.
+
+| Input | Result | Reason |
+|---|---|---|
+| `298765432109` | Pass | 12 digits, starts with 2 |
+| `198765432109` | Fail | starts with 1 |
+| `12345` | Fail | too short |
+
+## PAN_PATTERN
+
+```
+/^[A-Z]{3}P[A-Z]\d{4}[A-Z]$/
+```
+
+Matches a PAN number (3 letters, literal `P`, 1 letter, 4 digits, 1 letter).
+
+| Input | Result | Reason |
+|---|---|---|
+| `ABCPD1234E` | Pass | matches PAN format |
+| `ABCDE1234F` | Fail | 4th character is not `P` |
+| `abcpd1234e` | Fail | lowercase |
+
+## VOTER_PATTERN
+
+```
+/^[A-Z]{3}\d{7}$/
+```
+
+Matches a Voter ID (3 letters followed by 7 digits).
+
+| Input | Result | Reason |
+|---|---|---|
+| `ABC1234567` | Pass | 3 letters + 7 digits |
+| `AB1234567` | Fail | only 2 letters |
+| `ABC12345` | Fail | only 5 digits |
+
+## BANK_CARD_PATTERN
+
+```
+/^(?:\d[ -]*?){13,19}$/
+```
+
+Matches a 13-19 digit bank card number, optionally separated by spaces or dashes.
+
+| Input | Result | Reason |
+|---|---|---|
+| `4111 1111 1111 1111` | Pass | 16 digits, space-separated |
+| `4111-1111-1111-1111` | Pass | 16 digits, dash-separated |
+| `4111111111111111` | Pass | 16 digits, no separators |
+| `1234567` | Fail | fewer than 13 digits |
+| `not-a-card` | Fail | not numeric |
+
+## BLOOD_GROUP_PATTERN
+
+```
+/^(A|B|AB|O)\s?[+-]$/i
+```
+
+Matches a blood group (A, B, AB, or O) with an Rh factor, case-insensitive, with an optional space before the sign.
+
+| Input | Result | Reason |
+|---|---|---|
+| `A+` | Pass | valid blood group |
+| `AB-` | Pass | valid blood group |
+| `o+` | Pass | case-insensitive match |
+| `B +` | Pass | optional space before sign |
+| `C+` | Fail | `C` is not a valid blood group |
+| `A` | Fail | missing Rh sign |
+
+## MISSING_DATA_VALUES
+
+```
+['-', 'null']
+```
+
+Sentinel string values (after trimming) that, alongside an empty string or `null`, are treated as missing data by [checkDataQuality.ts](../checkDataQuality.ts).
+
 ## Verification
 
-These pass/fail cases are exercised by the unit tests in [patterns.test.ts](./patterns.test.ts).
+These pass/fail cases are exercised by the unit tests in [patterns.test.ts](./patterns.test.ts) and [checkDataQuality.test.ts](../checkDataQuality.test.ts).
