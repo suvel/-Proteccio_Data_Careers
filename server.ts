@@ -1,4 +1,5 @@
 import express from 'express';
+import path from 'path';
 import { errorHandler } from './middleware/errorHandler';
 import { upload } from './middleware/upload';
 import { processDocument } from './routes/processDocument';
@@ -12,6 +13,13 @@ app.get('/hello', (_req, res) => {
 });
 
 app.post('/process_document', upload.single('file'), processDocument);
+
+const clientDist = path.join(__dirname, 'client', 'dist');
+app.use(express.static(clientDist));
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(clientDist, 'index.html'));
+});
 
 app.use((_req, _res, next) => {
   next(new PublicApiError(RestErrorCode.NOT_FOUND));
