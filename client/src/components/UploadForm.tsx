@@ -30,7 +30,7 @@ export function UploadForm({ onResult }: UploadFormProps) {
     <div>
       <Group align="flex-end">
         <FileInput
-          label="Upload a CSV or Excel file"
+          label="Upload a CSV or Excel file from Local machine"
           placeholder="Choose file"
           accept=".csv,.xls,.xlsx"
           value={file}
