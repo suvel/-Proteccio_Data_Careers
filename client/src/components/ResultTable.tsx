@@ -55,6 +55,16 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
     [rows, startIndex, pageSize],
   );
 
+  const duplicateRowIndices = useMemo(() => {
+    const indices = new Set<number>();
+    if (duplicateRows) {
+      for (const rowIdxs of Object.values(duplicateRows)) {
+        rowIdxs.forEach((i) => indices.add(i));
+      }
+    }
+    return indices;
+  }, [duplicateRows]);
+
   return (
     <Stack mt="lg">
       <Table striped withTableBorder withColumnBorders>
@@ -76,31 +86,38 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
           </Table.Tr>
         </Table.Thead>
         <Table.Tbody>
-          {visibleRows.map((row, rowIndex) => (
-            <Table.Tr key={startIndex + rowIndex}>
-              <Table.Td>{startIndex + rowIndex + 1}</Table.Td>
-              {headers.map((header) => {
-                const cell = row[header.header_id];
-                return (
-                  <Table.Td key={header.header_id}>
-                    <Group gap="xs" wrap="nowrap">
-                      <Text>{formatValue(cell)}</Text>
-                      {cell?.sensitive_data && confirmedSensitiveIds.has(header.header_id) && (
-                        <Badge color="red" size="xs">
-                          sensitive
-                        </Badge>
-                      )}
-                      {cell?.missing_data && (
-                        <Badge color="yellow" size="xs">
-                          missing
-                        </Badge>
-                      )}
-                    </Group>
-                  </Table.Td>
-                );
-              })}
-            </Table.Tr>
-          ))}
+          {visibleRows.map((row, rowIndex) => {
+            const absoluteIndex = startIndex + rowIndex;
+            const isDuplicate = duplicateRowIndices.has(absoluteIndex);
+            return (
+              <Table.Tr
+                key={absoluteIndex}
+                style={isDuplicate ? { backgroundColor: '#fd7e141a', color:'var(--mantine-color-orange-light-color)' } : undefined}
+              >
+                <Table.Td>{absoluteIndex + 1}</Table.Td>
+                {headers.map((header) => {
+                  const cell = row[header.header_id];
+                  return (
+                    <Table.Td key={header.header_id}>
+                      <Group gap="xs" wrap="nowrap">
+                        <Text>{formatValue(cell)}</Text>
+                        {cell?.sensitive_data && confirmedSensitiveIds.has(header.header_id) && (
+                          <Badge color="red" size="xs">
+                            sensitive
+                          </Badge>
+                        )}
+                        {cell?.missing_data && (
+                          <Badge color="yellow" size="xs">
+                            missing
+                          </Badge>
+                        )}
+                      </Group>
+                    </Table.Td>
+                  );
+                })}
+              </Table.Tr>
+            );
+          })}
         </Table.Tbody>
       </Table>
 
