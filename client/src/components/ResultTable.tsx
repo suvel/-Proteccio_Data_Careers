@@ -37,6 +37,7 @@ export function ResultTable({ result }: ResultTableProps) {
       <Table striped withTableBorder withColumnBorders>
         <Table.Thead>
           <Table.Tr>
+            <Table.Th>#</Table.Th>
             {headers.map((header) => (
               <Table.Th key={header.header_id}>
                 <Group gap="xs" wrap="nowrap">
@@ -54,6 +55,7 @@ export function ResultTable({ result }: ResultTableProps) {
         <Table.Tbody>
           {visibleRows.map((row, rowIndex) => (
             <Table.Tr key={startIndex + rowIndex}>
+              <Table.Td>{startIndex + rowIndex + 1}</Table.Td>
               {headers.map((header) => {
                 const cell = row[header.header_id];
                 return (
@@ -141,7 +143,7 @@ export function ResultTable({ result }: ResultTableProps) {
         <Alert color="orange" title="Duplicate rows detected">
           {Object.entries(duplicateRows).map(([fingerprint, indices]) => (
             <Text size="sm" key={fingerprint}>
-              Rows {indices.join(', ')} are duplicates of each other
+              Rows {indices.map((i) => i + 1).join(', ')} are duplicates of each other
             </Text>
           ))}
         </Alert>
