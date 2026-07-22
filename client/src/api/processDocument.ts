@@ -15,6 +15,14 @@ function reviveParsedFile(parsed: ParsedFile): ParsedFile {
       }
     }
   }
+  for (const attrs of parsed.colAttributes) {
+    if (!DATE_LIKE_TYPES.has(attrs.data_type)) continue;
+    for (const entry of attrs.topValues ?? []) {
+      if (typeof entry.value === 'string') {
+        entry.value = new Date(entry.value);
+      }
+    }
+  }
   return parsed;
 }
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, Badge, Card, Group, Pagination, Select, SimpleGrid, Stack, Table, Text } from '@mantine/core';
-import type { Cell, ParsedFile } from '../types';
+import type { Cell, ColumnAttributes, ParsedFile, TopValueEntry } from '../types';
 
 interface ResultTableProps {
   result: ParsedFile;
@@ -8,14 +8,32 @@ interface ResultTableProps {
 
 const PAGE_SIZE_OPTIONS = ['10', '25', '50', '100'];
 
-export function formatValue(cell: Cell | undefined): string {
-  if (!cell || cell.value === null || cell.value === undefined) return '';
-  if (cell.value instanceof Date) {
-    if (cell.data_type === 'Time') return cell.value.toLocaleTimeString();
-    if (cell.data_type === 'DateTime') return cell.value.toLocaleString();
-    return cell.value.toLocaleDateString();
+export function formatCellValue(value: Cell['value'] | undefined, data_type: Cell['data_type']): string {
+  if (value === null || value === undefined) return '';
+  if (value instanceof Date) {
+    if (data_type === 'Time') return value.toLocaleTimeString();
+    if (data_type === 'DateTime') return value.toLocaleString();
+    return value.toLocaleDateString();
   }
-  return String(cell.value);
+  return String(value);
+}
+
+export function formatValue(cell: Cell | undefined): string {
+  if (!cell) return '';
+  return formatCellValue(cell.value, cell.data_type);
+}
+
+export function getMostRepeatingEntry(
+  attr: Pick<ColumnAttributes, 'data_type' | 'topValues'>,
+): TopValueEntry | null {
+  if (attr.data_type === 'Number') return null;
+  const topValues = attr.topValues ?? [];
+  if (topValues.length <= 1) return null;
+  return topValues[0].count > 1 ? topValues[0] : null;
+}
+
+export function getDisplayedTopValues(attr: Pick<ColumnAttributes, 'topValues'>): TopValueEntry[] {
+  return (attr.topValues ?? []).slice(0, 3);
 }
 
 export function ResultTable({ result }: ResultTableProps) {
@@ -108,6 +126,8 @@ export function ResultTable({ result }: ResultTableProps) {
       <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="sm">
         {colAttributes.map((attr) => {
           const label = headers.find((h) => h.header_id === attr.header_id)?.header_label ?? attr.header_id;
+          const mostRepeating = getMostRepeatingEntry(attr);
+          const displayedTopValues = getDisplayedTopValues(attr);
           return (
             <Card key={attr.header_id} withBorder padding="sm">
               <Stack gap={4}>
@@ -122,9 +142,9 @@ export function ResultTable({ result }: ResultTableProps) {
                     Std dev: {attr.standard_deviation.toFixed(2)}
                   </Text>
                 )}
-                {attr.isBiased && (
+                {mostRepeating && (
                   <Badge color="grape" size="xs">
-                    biased{attr.biasedValue ? `: ${attr.biasedValue}` : ''}
+                    Most repeating: {formatCellValue(mostRepeating.value, attr.data_type)} ({mostRepeating.count})
                   </Badge>
                 )}
                 {attr.isDateRangeComplete === false && (
@@ -136,6 +156,23 @@ export function ResultTable({ result }: ResultTableProps) {
                   <Text size="xs" c="dimmed">
                     Missing years: {attr.missingYears.join(', ')}
                   </Text>
+                )}
+                {attr.min_value !== undefined && (
+                  <Text size="xs" c="dimmed">
+                    Min: {attr.min_value} · Max: {attr.max_value} · Avg: {attr.average_value?.toFixed(2)}
+                  </Text>
+                )}
+                {displayedTopValues.length > 0 && (
+                  <Stack gap={2}>
+                    <Text size="xs" fw={600}>
+                      Top #3 values
+                    </Text>
+                    {displayedTopValues.map((tv, i) => (
+                      <Text size="xs" c="dimmed" key={i}>
+                        {formatCellValue(tv.value, attr.data_type)} ({tv.count})
+                      </Text>
+                    ))}
+                  </Stack>
                 )}
               </Stack>
             </Card>

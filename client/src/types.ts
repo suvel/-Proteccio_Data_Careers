@@ -18,6 +18,11 @@ export interface Row {
   [header_id: string]: Cell;
 }
 
+export interface TopValueEntry {
+  value: string | number | Date | null;
+  count: number;
+}
+
 export interface ColumnAttributes {
   header_id: string;
   data_type: DataType;
@@ -26,6 +31,10 @@ export interface ColumnAttributes {
   biasedValue?: string;
   isDateRangeComplete?: boolean;
   missingYears?: number[];
+  min_value?: number;
+  max_value?: number;
+  average_value?: number;
+  topValues?: TopValueEntry[];
 }
 
 export interface ParsedFile {

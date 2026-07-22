@@ -1,4 +1,4 @@
-import { Cell, DataType, Header, ParsedFile, Row } from './types';
+import { Cell, DataType, Header, ParsedFile, Row, TopValueEntry } from './types';
 import { MISSING_DATA_VALUES } from './constants/patterns';
 import { ValidationErrorCode } from './constants/errorCodes';
 import { ValidationError } from './errors';
@@ -198,6 +198,68 @@ function cellValueKey(cell: Cell): string {
   if (isMissingData(cell.value)) return NULL_VALUE_KEY;
   if (cell.value instanceof Date) return String(cell.value.getTime());
   return String(cell.value);
+}
+
+/**
+ * Computes the min, max, and average of a Number column's non-missing values.
+ * @example
+ * computeNumericRangeAttributes([
+ *   { value: 2, data_type: 'Number' },
+ *   { value: 4, data_type: 'Number' },
+ *   { value: 6, data_type: 'Number' },
+ * ])
+ * // => { min_value: 2, max_value: 6, average_value: 4 }
+ */
+export function computeNumericRangeAttributes(
+  nonMissing: Cell[],
+): { min_value?: number; max_value?: number; average_value?: number } {
+  const numbers = nonMissing.filter((cell) => typeof cell.value === 'number').map((cell) => cell.value as number);
+  if (numbers.length === 0) return {};
+  return {
+    min_value: Math.min(...numbers),
+    max_value: Math.max(...numbers),
+    average_value: numbers.reduce((sum, value) => sum + value, 0) / numbers.length,
+  };
+}
+
+/**
+ * Finds the most frequent distinct values in a column's non-missing cells (top 3 by
+ * default). If no value repeats at all, returns every distinct value instead of
+ * truncating to topN. Ties in frequency are broken by first-seen order.
+ * @example
+ * computeTopValues([
+ *   { value: 'a', data_type: 'String' },
+ *   { value: 'b', data_type: 'String' },
+ *   { value: 'a', data_type: 'String' },
+ * ])
+ * // => [{ value: 'a', count: 2 }, { value: 'b', count: 1 }]
+ */
+export function computeTopValues(nonMissing: Cell[], topN = 3): TopValueEntry[] {
+  if (nonMissing.length === 0) return [];
+
+  const order: string[] = [];
+  const counts = new Map<string, number>();
+  const representative = new Map<string, Cell['value']>();
+
+  for (const cell of nonMissing) {
+    const key = cellValueKey(cell);
+    if (!counts.has(key)) {
+      counts.set(key, 0);
+      representative.set(key, cell.value);
+      order.push(key);
+    }
+    counts.set(key, counts.get(key)! + 1);
+  }
+
+  const allUnique = counts.size === nonMissing.length;
+  const entries: TopValueEntry[] = order.map((key) => ({
+    value: representative.get(key)!,
+    count: counts.get(key)!,
+  }));
+
+  entries.sort((a, b) => b.count - a.count);
+
+  return allUnique ? entries : entries.slice(0, topN);
 }
 
 /**

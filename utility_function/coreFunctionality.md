@@ -3,7 +3,7 @@
 This document describes every function exported from [helpers.ts](helpers.ts), grouped by the data-check category it supports:
 
 - **Data Quality** — is a value missing, blank, or a placeholder? (feeds `checkDataQuality.ts`)
-- **Data Completeness** — given the valid, non-missing values in a column, what do they look like statistically (spread, bias, coverage)? (feeds `checkDataCompleteness.ts`)
+- **Data Completeness** — given the valid, non-missing values in a column, what do they look like statistically (spread, bias, coverage, range, top-frequency)? (feeds `checkDataCompleteness.ts`)
 
 For each function: purpose, signature, and a good (expected/valid) case plus a bad (edge/invalid) case.
 
@@ -71,3 +71,24 @@ For Date cells, finds the min/max year present and reports which years within th
 | ✅ Good | Dates in 2021, 2022 (consecutive) | `{ isDateRangeComplete: true, missingYears: [] }` | No gaps in the range. |
 | ❌ Bad / edge | `computeDateRangeAttributes([{value:1,data_type:'Number'}])` | `{}` | No Date-typed cells present — returns an empty object (both fields `undefined`) instead of a false "complete" or "incomplete" claim. |
 | ❌ Bad / edge | A single date value (min year === max year) | `{ isDateRangeComplete: true, missingYears: [] }` | A one-point range trivially has no gaps — not mistaken for "insufficient data". |
+
+### `computeNumericRangeAttributes(nonMissing: Cell[]): { min_value?: number; max_value?: number; average_value?: number }`
+
+For Number columns, computes the minimum, maximum, and arithmetic mean of the non-missing numeric values.
+
+| Case | Input | Output | Notes |
+|---|---|---|---|
+| ✅ Good | `computeNumericRangeAttributes([{value:2,...}, {value:4,...}, {value:6,...}])` | `{ min_value: 2, max_value: 6, average_value: 4 }` | Standard case. |
+| ✅ Good | `computeNumericRangeAttributes([{value:5,...}])` | `{ min_value: 5, max_value: 5, average_value: 5 }` | Single value — trivial range. |
+| ❌ Bad / edge | `computeNumericRangeAttributes([])` | `{}` | No numeric cells present — returns an empty object rather than `NaN`/`Infinity`. |
+
+### `computeTopValues(nonMissing: Cell[], topN = 3): TopValueEntry[]`
+
+For String/Date/Time/DateTime columns, groups non-missing cells by distinct value, counts occurrences, and returns the `topN` most frequent, sorted by count descending with ties broken by first-seen order (consistent with `mostCommonDataType`'s tie-break philosophy). If every value in the column is distinct (no repeats at all), returns **all** distinct values instead of truncating to `topN`.
+
+| Case | Input | Output | Notes |
+|---|---|---|---|
+| ✅ Good | `['a','a','a','b','b','c','d']` | `[{value:'a',count:3},{value:'b',count:2},{value:'c',count:1}]` | Top 3 by frequency; `'d'` dropped. |
+| ✅ Good | `['a','b','c','d','e']` (all unique) | 5 entries, each `count: 1` | No repeats anywhere — full list returned instead of top 3. |
+| ✅ Good | `['b','a','b','a']` (tie) | `[{value:'b',count:2},{value:'a',count:2}]` | Equal counts (2 vs 2) — resolved by first-seen order. |
+| ❌ Bad / edge | `[]` (all cells missing, filtered upstream) | `[]` | No non-missing cells — empty result rather than throwing. |

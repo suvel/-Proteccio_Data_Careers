@@ -2,7 +2,9 @@ import { ColumnAttributes, Header, ParsedFile, Row } from './types';
 import {
   computeBiasAttributes,
   computeDateRangeAttributes,
+  computeNumericRangeAttributes,
   computeStandardDeviationForCells,
+  computeTopValues,
   getNonMissingCells,
   mostCommonDataType,
   validateParsedFile,
@@ -26,12 +28,17 @@ function computeColumnAttributes(header: Header, rows: Row[]): ColumnAttributes 
 
   if (dataType === 'Number') {
     attrs.standard_deviation = computeStandardDeviationForCells(nonMissing);
+    Object.assign(attrs, computeNumericRangeAttributes(nonMissing));
   }
 
   Object.assign(attrs, computeBiasAttributes(dataType, nonMissing));
 
   if (dataType === 'Date' || dataType === 'DateTime') {
     Object.assign(attrs, computeDateRangeAttributes(nonMissing));
+  }
+
+  if (dataType === 'String' || dataType === 'Date' || dataType === 'Time' || dataType === 'DateTime') {
+    attrs.topValues = computeTopValues(nonMissing);
   }
 
   return attrs;

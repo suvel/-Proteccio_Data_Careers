@@ -107,6 +107,104 @@ describe('checkDataCompleteness - date range completeness', () => {
   });
 });
 
+describe('checkDataCompleteness - numeric range', () => {
+  it('computes min/max/average for a Number column', () => {
+    const attrs = colAttrsFor('Number', [2, 4, 6, 8]);
+    expect(attrs.min_value).toBe(2);
+    expect(attrs.max_value).toBe(8);
+    expect(attrs.average_value).toBeCloseTo(5, 5);
+  });
+
+  it('does not compute numeric range for a String column', () => {
+    const attrs = colAttrsFor('String', ['a', 'b']);
+    expect(attrs.min_value).toBeUndefined();
+    expect(attrs.max_value).toBeUndefined();
+    expect(attrs.average_value).toBeUndefined();
+  });
+
+  it('excludes missing/null cells from min/max/average', () => {
+    const attrs = colAttrsFor('Number', [null, '-', 10, 20]);
+    expect(attrs.min_value).toBe(10);
+    expect(attrs.max_value).toBe(20);
+    expect(attrs.average_value).toBe(15);
+  });
+});
+
+describe('checkDataCompleteness - top values', () => {
+  it('returns the top 3 most frequent values for a repeating String column, sorted desc', () => {
+    const attrs = colAttrsFor('String', ['a', 'a', 'a', 'b', 'b', 'c', 'd']);
+    expect(attrs.topValues).toEqual([
+      { value: 'a', count: 3 },
+      { value: 'b', count: 2 },
+      { value: 'c', count: 1 },
+    ]);
+  });
+
+  it('breaks ties in frequency by first-seen order', () => {
+    const attrs = colAttrsFor('String', ['b', 'a', 'b', 'a']);
+    expect(attrs.topValues).toEqual([
+      { value: 'b', count: 2 },
+      { value: 'a', count: 2 },
+    ]);
+  });
+
+  it('returns all distinct values (not just top 3) when every value is unique', () => {
+    const attrs = colAttrsFor('String', ['a', 'b', 'c', 'd', 'e']);
+    expect(attrs.topValues).toEqual([
+      { value: 'a', count: 1 },
+      { value: 'b', count: 1 },
+      { value: 'c', count: 1 },
+      { value: 'd', count: 1 },
+      { value: 'e', count: 1 },
+    ]);
+  });
+
+  it('returns a single entry for a single-value column', () => {
+    const attrs = colAttrsFor('String', ['only']);
+    expect(attrs.topValues).toEqual([{ value: 'only', count: 1 }]);
+  });
+
+  it('does not compute topValues for an all-missing column (early return)', () => {
+    const attrs = colAttrsFor('String', [null, '-', '']);
+    expect(attrs.topValues).toBeUndefined();
+  });
+
+  it('computes top values for a Date column', () => {
+    const d1 = new Date('2022-01-01');
+    const d2 = new Date('2022-06-01');
+    const attrs = colAttrsFor('Date', [d1, d1, d2]);
+    expect(attrs.topValues).toEqual([
+      { value: d1, count: 2 },
+      { value: d2, count: 1 },
+    ]);
+  });
+
+  it('computes top values for a Time column', () => {
+    const t1 = new Date(1970, 0, 1, 9, 0);
+    const t2 = new Date(1970, 0, 1, 14, 30);
+    const attrs = colAttrsFor('Time', [t1, t1, t2]);
+    expect(attrs.topValues).toEqual([
+      { value: t1, count: 2 },
+      { value: t2, count: 1 },
+    ]);
+  });
+
+  it('computes top values for a DateTime column', () => {
+    const dt1 = new Date('2022-01-01T09:00:00');
+    const dt2 = new Date('2022-06-01T14:30:00');
+    const attrs = colAttrsFor('DateTime', [dt1, dt2, dt2]);
+    expect(attrs.topValues).toEqual([
+      { value: dt2, count: 2 },
+      { value: dt1, count: 1 },
+    ]);
+  });
+
+  it('does not compute topValues for a Number column', () => {
+    const attrs = colAttrsFor('Number', [1, 2, 3]);
+    expect(attrs.topValues).toBeUndefined();
+  });
+});
+
 describe('checkDataCompleteness - input validation', () => {
   it('throws ValidationError(INVALID_PARSED_FILE) for null input', () => {
     expect(() => checkDataCompleteness(null as unknown as ParsedFile)).toThrow(ValidationError);
