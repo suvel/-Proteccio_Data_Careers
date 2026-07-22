@@ -5,7 +5,7 @@
   "description": "CSV/XLS to JSON parsing utility",
   "scripts": {
     "build": "tsc && npm --prefix client install && npm --prefix client run build",
-    "start": "ts-node server.ts",
+    "start": "node dist/server.js",
     "test": "jest",
     "format": "prettier --write \"**/*.{ts,tsx,json,md}\" --ignore-path .prettierignore",
     "format:check": "prettier --check \"**/*.{ts,tsx,json,md}\" --ignore-path .prettierignore"
