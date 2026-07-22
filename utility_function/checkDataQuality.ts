@@ -3,15 +3,19 @@ import { SENSITIVE_DATA_PATTERNS } from './constants/patterns';
 import { checkDataCompleteness } from './checkDataCompleteness';
 import { isMissingData, validateParsedFile } from './helpers';
 
-function isSensitiveData(value: Cell['value']): boolean {
-  if (typeof value !== 'string') return false;
+function findSensitivePattern(value: Cell['value']): string | undefined {
+  if (typeof value !== 'string') return undefined;
   const trimmed = value.trim();
-  return SENSITIVE_DATA_PATTERNS.some((pattern) => pattern.test(trimmed));
+  return SENSITIVE_DATA_PATTERNS.find(({ pattern }) => pattern.test(trimmed))?.name;
 }
 
 function evaluateCell(cell: Cell): Cell {
   const result: Cell = { ...cell };
-  if (isSensitiveData(cell.value)) result.sensitive_data = true;
+  const matchedPattern = findSensitivePattern(cell.value);
+  if (matchedPattern) {
+    result.sensitive_data = true;
+    result.sensitive_pattern = matchedPattern;
+  }
   if (isMissingData(cell.value)) result.missing_data = true;
   return result;
 }

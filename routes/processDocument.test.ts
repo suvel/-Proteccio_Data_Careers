@@ -44,16 +44,32 @@ describe('POST /process_document', () => {
       expect(res.status).toBe(200);
       const [johnRow, janeRow] = res.body.rows;
 
-      expect(johnRow.full_name).toEqual({ value: 'John Smith', data_type: 'String', sensitive_data: true });
+      expect(johnRow.full_name).toEqual({
+        value: 'John Smith',
+        data_type: 'String',
+        sensitive_data: true,
+        sensitive_pattern: 'Full Name',
+      });
       expect(johnRow.email).toEqual({
         value: 'john.smith@example.com',
         data_type: 'String',
         sensitive_data: true,
+        sensitive_pattern: 'Email',
       });
-      expect(johnRow.phone).toEqual({ value: '+919812345678', data_type: 'String', sensitive_data: true });
+      expect(johnRow.phone).toEqual({
+        value: '+919812345678',
+        data_type: 'String',
+        sensitive_data: true,
+        sensitive_pattern: 'Phone Number',
+      });
       expect(johnRow.notes).toEqual({ value: '-', data_type: 'String', missing_data: true });
 
-      expect(janeRow.full_name).toEqual({ value: 'Jane Doe', data_type: 'String', sensitive_data: true });
+      expect(janeRow.full_name).toEqual({
+        value: 'Jane Doe',
+        data_type: 'String',
+        sensitive_data: true,
+        sensitive_pattern: 'Full Name',
+      });
       expect(janeRow.email.sensitive_data).toBeUndefined();
     });
   });

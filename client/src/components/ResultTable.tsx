@@ -4,6 +4,7 @@ import type { Cell, ColumnAttributes, ParsedFile, TopValueEntry } from '../types
 
 interface ResultTableProps {
   result: ParsedFile;
+  confirmedSensitiveIds?: Set<string>;
 }
 
 const PAGE_SIZE_OPTIONS = ['10', '25', '50', '100'];
@@ -36,7 +37,7 @@ export function getDisplayedTopValues(attr: Pick<ColumnAttributes, 'topValues'>)
   return (attr.topValues ?? []).slice(0, 3);
 }
 
-export function ResultTable({ result }: ResultTableProps) {
+export function ResultTable({ result, confirmedSensitiveIds = new Set() }: ResultTableProps) {
   const { headers, rows, colAttributes, duplicateRows } = result;
 
   const [page, setPage] = useState(1);
@@ -84,7 +85,7 @@ export function ResultTable({ result }: ResultTableProps) {
                   <Table.Td key={header.header_id}>
                     <Group gap="xs" wrap="nowrap">
                       <Text>{formatValue(cell)}</Text>
-                      {cell?.sensitive_data && (
+                      {cell?.sensitive_data && confirmedSensitiveIds.has(header.header_id) && (
                         <Badge color="red" size="xs">
                           sensitive
                         </Badge>

@@ -11,6 +11,7 @@ export interface Cell {
   value: string | number | Date | null;
   data_type: DataType;
   sensitive_data?: boolean;
+  sensitive_pattern?: string;
   missing_data?: boolean;
 }
 

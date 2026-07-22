@@ -17,15 +17,20 @@ export const VOTER_PATTERN = /^[A-Z]{3}\d{7}$/;
 export const BANK_CARD_PATTERN = /^(?:\d[ -]*?){13,19}$/;
 export const BLOOD_GROUP_PATTERN = /^(A|B|AB|O)\s?[+-]$/i;
 
-export const SENSITIVE_DATA_PATTERNS: RegExp[] = [
-  EMAIL_PATTERN,
-  PHONE_PATTERN,
-  NAME_PATTERN,
-  AADHAR_PATTERN,
-  PAN_PATTERN,
-  VOTER_PATTERN,
-  BANK_CARD_PATTERN,
-  BLOOD_GROUP_PATTERN,
+export interface SensitivePattern {
+  name: string;
+  pattern: RegExp;
+}
+
+export const SENSITIVE_DATA_PATTERNS: SensitivePattern[] = [
+  { name: 'Email', pattern: EMAIL_PATTERN },
+  { name: 'Phone Number', pattern: PHONE_PATTERN },
+  { name: 'Full Name', pattern: NAME_PATTERN },
+  { name: 'Aadhaar Number', pattern: AADHAR_PATTERN },
+  { name: 'PAN Number', pattern: PAN_PATTERN },
+  { name: 'Voter ID', pattern: VOTER_PATTERN },
+  { name: 'Bank Card Number', pattern: BANK_CARD_PATTERN },
+  { name: 'Blood Group', pattern: BLOOD_GROUP_PATTERN },
 ];
 
 export const MISSING_DATA_VALUES = ['-', 'null'];
