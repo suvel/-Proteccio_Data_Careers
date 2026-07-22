@@ -1,8 +1,25 @@
 import * as path from 'path';
-import { parseFileToJson } from './parseFileToJson';
+import { classifyDateFormat, parseFileToJson } from './parseFileToJson';
 import { ParsedFile } from './types';
 
 const fixture = (name: string) => path.join(__dirname, '__fixtures__', name);
+
+describe('classifyDateFormat', () => {
+  it.each([
+    ['m/d/yy', undefined, 'Date'],
+    ['yyyy-mm-dd', undefined, 'Date'],
+    ['h:mm:ss', undefined, 'Time'],
+    ['h:mm AM/PM', undefined, 'Time'],
+    ['m/d/yy h:mm', undefined, 'DateTime'],
+    ['yyyy-mm-dd hh:mm:ss', undefined, 'DateTime'],
+    [undefined, '2:30 PM', 'Time'],
+    [undefined, '1/15/23', 'Date'],
+    [undefined, undefined, 'Date'],
+    ['General', '1/15/23 2:30 PM', 'DateTime'],
+  ] as const)('classifies format %p / display %p as %p', (fmt, display, expected) => {
+    expect(classifyDateFormat(fmt, display)).toBe(expected);
+  });
+});
 
 describe('parseFileToJson', () => {
   describe('mixed-types.csv', () => {
@@ -41,6 +58,38 @@ describe('parseFileToJson', () => {
 
     it('produces one row per data line', () => {
       expect(result.rows).toHaveLength(3);
+    });
+  });
+
+  describe('date-time-types.csv', () => {
+    let result: ParsedFile;
+
+    beforeAll(() => {
+      result = parseFileToJson(fixture('date-time-types.csv'));
+    });
+
+    it('infers Date for a date-only column', () => {
+      const cell = result.rows[0].meeting_date;
+      expect(cell.data_type).toBe('Date');
+      expect((cell.value as Date).toISOString().slice(0, 10)).toBe('2023-01-15');
+    });
+
+    it('infers Time for a time-only column', () => {
+      const cell = result.rows[0].meeting_time;
+      expect(cell.data_type).toBe('Time');
+      expect(cell.value).toBeInstanceOf(Date);
+      const time = cell.value as Date;
+      expect(time.getHours()).toBe(14);
+      expect(time.getMinutes()).toBe(30);
+    });
+
+    it('infers DateTime for a combined date-and-time column', () => {
+      const cell = result.rows[0].meeting_starts_at;
+      expect(cell.data_type).toBe('DateTime');
+      const value = cell.value as Date;
+      expect(value.getFullYear()).toBe(2023);
+      expect(value.getHours()).toBe(14);
+      expect(value.getMinutes()).toBe(30);
     });
   });
 

@@ -89,6 +89,22 @@ describe('checkDataCompleteness - date range completeness', () => {
     expect(attrs.isDateRangeComplete).toBe(false);
     expect(attrs.missingYears).toEqual([2021]);
   });
+
+  it('computes date-range attributes for a DateTime column', () => {
+    const attrs = colAttrsFor('DateTime', [
+      new Date('2020-01-01T09:00:00'),
+      new Date('2020-06-01T09:00:00'),
+      new Date('2022-01-01T09:00:00'),
+    ]);
+    expect(attrs.isDateRangeComplete).toBe(false);
+    expect(attrs.missingYears).toEqual([2021]);
+  });
+
+  it('does not compute date-range attributes for a Time column', () => {
+    const attrs = colAttrsFor('Time', [new Date(1970, 0, 1, 9, 0), new Date(1970, 0, 1, 14, 30)]);
+    expect(attrs.isDateRangeComplete).toBeUndefined();
+    expect(attrs.missingYears).toBeUndefined();
+  });
 });
 
 describe('checkDataCompleteness - input validation', () => {

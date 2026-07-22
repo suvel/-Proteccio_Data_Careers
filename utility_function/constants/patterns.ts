@@ -1,5 +1,10 @@
 export const NUMERIC_PATTERN = /^-?\d+(\.\d+)?$/;
 export const DATE_PATTERNS = [/^\d{4}-\d{2}-\d{2}$/, /^\d{1,2}\/\d{1,2}\/\d{4}$/];
+export const TIME_PATTERN = /^([01]?\d|2[0-3]):[0-5]\d(:[0-5]\d)?\s?([AaPp][Mm])?$/;
+export const DATETIME_PATTERNS = [
+  /^\d{4}-\d{2}-\d{2}[T ]\d{1,2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}:?\d{2})?$/,
+  /^\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2}(:\d{2})?\s?([AaPp][Mm])?$/,
+];
 export const SLUG_INVALID_CHARS_PATTERN = /[^a-z0-9]+/g;
 export const SLUG_TRIM_UNDERSCORE_PATTERN = /^_+|_+$/g;
 

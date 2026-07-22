@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Alert, Badge, Card, Group, Pagination, Select, SimpleGrid, Stack, Table, Text } from '@mantine/core';
-import type { ParsedFile } from '../types';
+import type { Cell, ParsedFile } from '../types';
 
 interface ResultTableProps {
   result: ParsedFile;
@@ -8,10 +8,14 @@ interface ResultTableProps {
 
 const PAGE_SIZE_OPTIONS = ['10', '25', '50', '100'];
 
-function formatValue(value: string | number | Date | null): string {
-  if (value === null || value === undefined) return '';
-  if (value instanceof Date) return value.toLocaleDateString();
-  return String(value);
+export function formatValue(cell: Cell | undefined): string {
+  if (!cell || cell.value === null || cell.value === undefined) return '';
+  if (cell.value instanceof Date) {
+    if (cell.data_type === 'Time') return cell.value.toLocaleTimeString();
+    if (cell.data_type === 'DateTime') return cell.value.toLocaleString();
+    return cell.value.toLocaleDateString();
+  }
+  return String(cell.value);
 }
 
 export function ResultTable({ result }: ResultTableProps) {
@@ -61,7 +65,7 @@ export function ResultTable({ result }: ResultTableProps) {
                 return (
                   <Table.Td key={header.header_id}>
                     <Group gap="xs" wrap="nowrap">
-                      <Text>{formatValue(cell?.value ?? null)}</Text>
+                      <Text>{formatValue(cell)}</Text>
                       {cell?.sensitive_data && (
                         <Badge color="red" size="xs">
                           sensitive

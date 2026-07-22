@@ -83,8 +83,11 @@ export function biasBucketKey(dataType: DataType, value: Cell['value']): string 
   if (dataType === 'Number' && typeof value === 'number') {
     return value > 0 ? 'positive' : value < 0 ? 'negative' : 'zero';
   }
-  if (dataType === 'Date' && value instanceof Date) {
+  if ((dataType === 'Date' || dataType === 'DateTime') && value instanceof Date) {
     return String(value.getFullYear());
+  }
+  if (dataType === 'Time' && value instanceof Date) {
+    return value.getHours() < 12 ? 'AM' : 'PM';
   }
   if (dataType === 'String' && typeof value === 'string') {
     return value;

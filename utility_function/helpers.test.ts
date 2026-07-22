@@ -60,6 +60,17 @@ describe('biasBucketKey', () => {
     expect(biasBucketKey('Date', new Date('2022-06-01'))).toBe('2022');
   });
 
+  it('buckets a DateTime value by year', () => {
+    expect(biasBucketKey('DateTime', new Date('2022-06-01T14:30:00'))).toBe('2022');
+  });
+
+  it.each([
+    [new Date(1970, 0, 1, 9, 30), 'AM'],
+    [new Date(1970, 0, 1, 14, 30), 'PM'],
+  ])('buckets a Time value %p as %p', (value, expected) => {
+    expect(biasBucketKey('Time', value)).toBe(expected);
+  });
+
   it('buckets a String value as itself', () => {
     expect(biasBucketKey('String', 'Apple')).toBe('Apple');
   });

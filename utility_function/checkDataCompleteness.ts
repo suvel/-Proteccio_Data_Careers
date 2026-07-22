@@ -30,7 +30,7 @@ function computeColumnAttributes(header: Header, rows: Row[]): ColumnAttributes 
 
   Object.assign(attrs, computeBiasAttributes(dataType, nonMissing));
 
-  if (dataType === 'Date') {
+  if (dataType === 'Date' || dataType === 'DateTime') {
     Object.assign(attrs, computeDateRangeAttributes(nonMissing));
   }
 

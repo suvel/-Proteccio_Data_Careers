@@ -45,6 +45,48 @@ Matches either ISO `YYYY-MM-DD` or `M/D/YYYY` (`MM/DD/YYYY`) formatted dates.
 | `15-01-2023` | Fail | wrong order for ISO format |
 | `2023-1-5` | Fail | ISO format requires 2-digit month/day |
 
+## TIME_PATTERN
+
+```
+/^([01]?\d|2[0-3]):[0-5]\d(:[0-5]\d)?\s?([AaPp][Mm])?$/
+```
+
+Matches a 24-hour or 12-hour (AM/PM) time-of-day string, with optional seconds.
+
+| Input | Result | Reason |
+|---|---|---|
+| `14:30` | Pass | 24-hour time |
+| `2:30 PM` | Pass | 12-hour time with AM/PM |
+| `09:05:59` | Pass | 24-hour time with seconds |
+| `12:00 am` | Pass | case-insensitive AM/PM |
+| `0:00` | Pass | single-digit hour |
+| `` (empty string) | Fail | no digits |
+| `not-a-time` | Fail | not a time |
+| `24:00` | Fail | hour out of range |
+| `12:60` | Fail | minute out of range |
+| `2023-01-15` | Fail | a date, not a time |
+| `2023-01-15 14:30` | Fail | includes a date part |
+
+## DATETIME_PATTERNS
+
+```
+[/^\d{4}-\d{2}-\d{2}[T ]\d{1,2}:\d{2}(:\d{2})?(\.\d+)?(Z|[+-]\d{2}:?\d{2})?$/, /^\d{1,2}\/\d{1,2}\/\d{4}\s+\d{1,2}:\d{2}(:\d{2})?\s?([AaPp][Mm])?$/]
+```
+
+Matches either an ISO-style `YYYY-MM-DD[T ]HH:mm[:ss][Z|offset]` timestamp or an `M/D/YYYY H:mm[:ss] [AM/PM]` combined date-and-time string.
+
+| Input | Result | Reason |
+|---|---|---|
+| `2023-01-15T14:30` | Pass | ISO date + time |
+| `2023-01-15T14:30:00` | Pass | ISO date + time with seconds |
+| `2023-01-15 14:30:00Z` | Pass | ISO date + time, space-separated, UTC suffix |
+| `1/15/2023 2:30 PM` | Pass | `M/D/YYYY` date + 12-hour time |
+| `` (empty string) | Fail | no digits |
+| `not-a-datetime` | Fail | not a datetime |
+| `2023-01-15` | Fail | date only, no time |
+| `14:30` | Fail | time only, no date |
+| `1/15/2023` | Fail | date only, no time |
+
 ## SLUG_INVALID_CHARS_PATTERN
 
 ```

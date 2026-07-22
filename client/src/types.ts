@@ -1,4 +1,4 @@
-export type DataType = 'String' | 'Number' | 'Date';
+export type DataType = 'String' | 'Number' | 'Date' | 'Time' | 'DateTime';
 
 export interface Header {
   header_id: string;
