@@ -1,5 +1,7 @@
 import { ParsedFile } from './types';
-import { buildColumnValueIds } from './helpers';
+import { buildColumnValueIds, validateParsedFile } from './helpers';
+import { ValidationError } from './errors';
+import { ValidationErrorCode } from './constants/errorCodes';
 
 /**
  * Detects duplicate rows by fingerprinting each row with per-column value IDs
@@ -13,6 +15,16 @@ import { buildColumnValueIds } from './helpers';
  * // => { ..., duplicateRows: { C1_1: [0, 1] } }
  */
 export function determineDataCleanup(parsedFile: ParsedFile): ParsedFile {
+  validateParsedFile(parsedFile);
+
+  for (const row of parsedFile.rows) {
+    for (const header of parsedFile.headers) {
+      if (!(header.header_id in row)) {
+        throw new ValidationError(ValidationErrorCode.MISSING_ROW_CELL);
+      }
+    }
+  }
+
   const columnIds = parsedFile.headers.map((header, index) =>
     buildColumnValueIds(
       index + 1,

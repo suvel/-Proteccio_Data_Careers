@@ -1,4 +1,4 @@
-import { Cell, Row } from './types';
+import { Cell, ParsedFile, Row } from './types';
 import {
   biasBucketKey,
   computeBiasAttributes,
@@ -8,7 +8,10 @@ import {
   isMissingData,
   mostCommonDataType,
   standardDeviation,
+  validateParsedFile,
 } from './helpers';
+import { ValidationError } from './errors';
+import { ValidationErrorCode } from './constants/errorCodes';
 
 const numberCell = (value: Cell['value']): Cell => ({ value, data_type: 'Number' });
 const dateCell = (value: Cell['value']): Cell => ({ value, data_type: 'Date' });
@@ -114,6 +117,47 @@ describe('computeBiasAttributes', () => {
 
   it('returns isBiased false when there are no bucketable cells', () => {
     expect(computeBiasAttributes('Number', [])).toEqual({ isBiased: false });
+  });
+});
+
+describe('validateParsedFile', () => {
+  const valid: ParsedFile = { headers: [], rows: [], colAttributes: [] };
+
+  it('does not throw for a valid ParsedFile', () => {
+    expect(() => validateParsedFile(valid)).not.toThrow();
+  });
+
+  it.each([null, undefined, 'not-an-object', 42])(
+    'throws ValidationError(INVALID_PARSED_FILE) for %p',
+    (value) => {
+      try {
+        validateParsedFile(value as unknown as ParsedFile);
+        throw new Error('expected validateParsedFile to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(ValidationError);
+        expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_PARSED_FILE);
+      }
+    },
+  );
+
+  it('throws ValidationError(INVALID_HEADERS) when headers is not an array', () => {
+    try {
+      validateParsedFile({ ...valid, headers: undefined } as unknown as ParsedFile);
+      throw new Error('expected validateParsedFile to throw');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError);
+      expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_HEADERS);
+    }
+  });
+
+  it('throws ValidationError(INVALID_ROWS) when rows is not an array', () => {
+    try {
+      validateParsedFile({ ...valid, rows: undefined } as unknown as ParsedFile);
+      throw new Error('expected validateParsedFile to throw');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError);
+      expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_ROWS);
+    }
   });
 });
 

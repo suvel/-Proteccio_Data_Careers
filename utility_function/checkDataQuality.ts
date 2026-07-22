@@ -1,7 +1,7 @@
 import { Cell, ParsedFile, Row } from './types';
 import { SENSITIVE_DATA_PATTERNS } from './constants/patterns';
 import { checkDataCompleteness } from './checkDataCompleteness';
-import { isMissingData } from './helpers';
+import { isMissingData, validateParsedFile } from './helpers';
 
 function isSensitiveData(value: Cell['value']): boolean {
   if (typeof value !== 'string') return false;
@@ -17,6 +17,7 @@ function evaluateCell(cell: Cell): Cell {
 }
 
 export function checkDataQuality(parsedFile: ParsedFile): ParsedFile {
+  validateParsedFile(parsedFile);
   const rows: Row[] = parsedFile.rows.map((row) => {
     const newRow: Row = {};
     for (const headerId of Object.keys(row)) {

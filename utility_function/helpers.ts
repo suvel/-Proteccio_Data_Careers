@@ -1,9 +1,30 @@
-import { Cell, DataType, Header, Row } from './types';
+import { Cell, DataType, Header, ParsedFile, Row } from './types';
 import { MISSING_DATA_VALUES } from './constants/patterns';
+import { ValidationErrorCode } from './constants/errorCodes';
+import { ValidationError } from './errors';
 
 const NULL_VALUE_KEY = '\0null';
 
 const BIAS_THRESHOLD = 0.7;
+
+/**
+ * Validates that a ParsedFile has the minimal shape every check function relies on.
+ * @example
+ * validateParsedFile({ headers: [], rows: [], colAttributes: [] }) // no-op, valid shape
+ * @example
+ * validateParsedFile(null) // throws ValidationError(ValidationErrorCode.INVALID_PARSED_FILE)
+ */
+export function validateParsedFile(parsedFile: ParsedFile): void {
+  if (typeof parsedFile !== 'object' || parsedFile === null) {
+    throw new ValidationError(ValidationErrorCode.INVALID_PARSED_FILE);
+  }
+  if (!Array.isArray(parsedFile.headers)) {
+    throw new ValidationError(ValidationErrorCode.INVALID_HEADERS);
+  }
+  if (!Array.isArray(parsedFile.rows)) {
+    throw new ValidationError(ValidationErrorCode.INVALID_ROWS);
+  }
+}
 
 export function isMissingData(value: Cell['value']): boolean {
   if (value === null) return true;

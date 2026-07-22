@@ -5,6 +5,7 @@ import {
   computeStandardDeviationForCells,
   getNonMissingCells,
   mostCommonDataType,
+  validateParsedFile,
 } from './helpers';
 
 /**
@@ -47,5 +48,6 @@ function computeColumnAttributes(header: Header, rows: Row[]): ColumnAttributes 
  * // => [{ header_id: 'age', data_type: 'Number', isBiased: false, standard_deviation: 1 }]
  */
 export function checkDataCompleteness(parsedFile: ParsedFile): ColumnAttributes[] {
+  validateParsedFile(parsedFile);
   return parsedFile.headers.map((header) => computeColumnAttributes(header, parsedFile.rows));
 }

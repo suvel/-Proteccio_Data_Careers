@@ -2,6 +2,8 @@ import * as path from 'path';
 import { checkDataCompleteness } from './checkDataCompleteness';
 import { parseFileToJson } from './parseFileToJson';
 import { Cell, DataType, ParsedFile } from './types';
+import { ValidationError } from './errors';
+import { ValidationErrorCode } from './constants/errorCodes';
 
 const fixture = (name: string) => path.join(__dirname, '__fixtures__', name);
 
@@ -86,6 +88,37 @@ describe('checkDataCompleteness - date range completeness', () => {
     const attrs = colAttrsFor('Date', [new Date('2020-01-01'), new Date('2020-06-01'), new Date('2022-01-01')]);
     expect(attrs.isDateRangeComplete).toBe(false);
     expect(attrs.missingYears).toEqual([2021]);
+  });
+});
+
+describe('checkDataCompleteness - input validation', () => {
+  it('throws ValidationError(INVALID_PARSED_FILE) for null input', () => {
+    expect(() => checkDataCompleteness(null as unknown as ParsedFile)).toThrow(ValidationError);
+    try {
+      checkDataCompleteness(null as unknown as ParsedFile);
+    } catch (error) {
+      expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_PARSED_FILE);
+    }
+  });
+
+  it('throws ValidationError(INVALID_HEADERS) when headers is not an array', () => {
+    const parsed = { headers: undefined, rows: [], colAttributes: [] } as unknown as ParsedFile;
+    expect(() => checkDataCompleteness(parsed)).toThrow(ValidationError);
+    try {
+      checkDataCompleteness(parsed);
+    } catch (error) {
+      expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_HEADERS);
+    }
+  });
+
+  it('throws ValidationError(INVALID_ROWS) when rows is not an array', () => {
+    const parsed = { headers: [], rows: undefined, colAttributes: [] } as unknown as ParsedFile;
+    expect(() => checkDataCompleteness(parsed)).toThrow(ValidationError);
+    try {
+      checkDataCompleteness(parsed);
+    } catch (error) {
+      expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_ROWS);
+    }
   });
 });
 

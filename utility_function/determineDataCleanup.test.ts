@@ -2,6 +2,8 @@ import * as path from 'path';
 import { determineDataCleanup } from './determineDataCleanup';
 import { parseFileToJson } from './parseFileToJson';
 import { Cell, ParsedFile } from './types';
+import { ValidationError } from './errors';
+import { ValidationErrorCode } from './constants/errorCodes';
 
 const fixture = (name: string) => path.join(__dirname, '__fixtures__', name);
 
@@ -74,6 +76,58 @@ describe('determineDataCleanup', () => {
     expect(parsed.duplicateRows).toBeUndefined();
     expect(parsed.rows).toBe(originalRows);
     expect(result).not.toBe(parsed);
+  });
+
+  describe('input validation', () => {
+    it('throws ValidationError(INVALID_PARSED_FILE) for null input', () => {
+      try {
+        determineDataCleanup(null as unknown as ParsedFile);
+        throw new Error('expected determineDataCleanup to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(ValidationError);
+        expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_PARSED_FILE);
+      }
+    });
+
+    it('throws ValidationError(INVALID_HEADERS) when headers is not an array', () => {
+      const parsed = { headers: undefined, rows: [], colAttributes: [] } as unknown as ParsedFile;
+      try {
+        determineDataCleanup(parsed);
+        throw new Error('expected determineDataCleanup to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(ValidationError);
+        expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_HEADERS);
+      }
+    });
+
+    it('throws ValidationError(INVALID_ROWS) when rows is not an array', () => {
+      const parsed = { headers: [], rows: undefined, colAttributes: [] } as unknown as ParsedFile;
+      try {
+        determineDataCleanup(parsed);
+        throw new Error('expected determineDataCleanup to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(ValidationError);
+        expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_ROWS);
+      }
+    });
+
+    it('throws ValidationError(MISSING_ROW_CELL) when a row is missing a cell for a declared header', () => {
+      const parsed: ParsedFile = {
+        headers: [
+          { header_id: 'col1', header_label: 'Col1', isDuplicateName: false },
+          { header_id: 'col2', header_label: 'Col2', isDuplicateName: false },
+        ],
+        rows: [{ col1: { value: 'a', data_type: 'String' } }],
+        colAttributes: [],
+      };
+      try {
+        determineDataCleanup(parsed);
+        throw new Error('expected determineDataCleanup to throw');
+      } catch (error) {
+        expect(error).toBeInstanceOf(ValidationError);
+        expect((error as ValidationError).code).toBe(ValidationErrorCode.MISSING_ROW_CELL);
+      }
+    });
   });
 
   describe('integration with parseFileToJson', () => {

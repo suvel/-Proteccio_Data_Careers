@@ -2,6 +2,8 @@ import * as path from 'path';
 import { checkDataQuality } from './checkDataQuality';
 import { parseFileToJson } from './parseFileToJson';
 import { Cell, ParsedFile } from './types';
+import { ValidationError } from './errors';
+import { ValidationErrorCode } from './constants/errorCodes';
 
 const fixture = (name: string) => path.join(__dirname, '__fixtures__', name);
 
@@ -119,6 +121,40 @@ describe('checkDataQuality - immutability', () => {
     expect(input.rows[0].col.sensitive_data).toBeUndefined();
     expect(result.rows[0].col).not.toBe(originalCell);
     expect(result).not.toBe(input);
+  });
+});
+
+describe('checkDataQuality - input validation', () => {
+  it('throws ValidationError(INVALID_PARSED_FILE) for undefined input', () => {
+    try {
+      checkDataQuality(undefined as unknown as ParsedFile);
+      throw new Error('expected checkDataQuality to throw');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError);
+      expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_PARSED_FILE);
+    }
+  });
+
+  it('throws ValidationError(INVALID_HEADERS) when headers is not an array', () => {
+    const parsed = { headers: 'not-an-array', rows: [], colAttributes: [] } as unknown as ParsedFile;
+    try {
+      checkDataQuality(parsed);
+      throw new Error('expected checkDataQuality to throw');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError);
+      expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_HEADERS);
+    }
+  });
+
+  it('throws ValidationError(INVALID_ROWS) when rows is not an array', () => {
+    const parsed = { headers: [], rows: 'not-an-array', colAttributes: [] } as unknown as ParsedFile;
+    try {
+      checkDataQuality(parsed);
+      throw new Error('expected checkDataQuality to throw');
+    } catch (error) {
+      expect(error).toBeInstanceOf(ValidationError);
+      expect((error as ValidationError).code).toBe(ValidationErrorCode.INVALID_ROWS);
+    }
   });
 });
 
