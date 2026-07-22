@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Alert, Button, FileInput, Group, Loader } from '@mantine/core';
+import { Alert, Button, FileInput, Group } from '@mantine/core';
 import { IconCloudUpload } from '@tabler/icons-react';
 import { processDocument } from '../api/processDocument';
 import type { ParsedFile } from '../types';
@@ -40,18 +40,28 @@ export function UploadForm({ onResult, showStoreButton, onStoreClick }: UploadFo
           value={file}
           onChange={setFile}
           w={320}
+          data-testid="file-input"
         />
-        <Button loading={loading} onClick={handleSubmit} disabled={!file || loading}>
+        <Button
+          loading={loading}
+          onClick={handleSubmit}
+          disabled={!file || loading}
+          data-testid="process-document-btn"
+        >
           Process document
         </Button>
         {showStoreButton && (
-          <Button onClick={onStoreClick} leftSection={<IconCloudUpload size={18} />}>
+          <Button
+            onClick={onStoreClick}
+            leftSection={<IconCloudUpload size={18} />}
+            data-testid="store-in-cloud-btn"
+          >
             Store in Cloud
           </Button>
         )}
       </Group>
       {error && (
-        <Alert color="red" title="Error" mt="md">
+        <Alert color="red" title="Error" mt="md" data-testid="upload-error-alert">
           {error}
         </Alert>
       )}

@@ -86,7 +86,7 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
   return (
     <Stack mt="lg">
       <Card withBorder padding="sm">
-        <UnstyledButton onClick={toggleStats}>
+        <UnstyledButton onClick={toggleStats} data-testid="toggle-column-stats">
           <Group justify="space-between">
             <Text fw={600}>Column stats</Text>
             <Text size="sm" c="dimmed">
@@ -101,7 +101,7 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
         </Collapse>
       </Card>
 
-      <Table striped withTableBorder withColumnBorders>
+      <Table striped withTableBorder withColumnBorders data-testid="result-table">
         <Table.Thead>
           <Table.Tr>
             <Table.Th>#</Table.Th>
@@ -163,7 +163,7 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
       </Table>
 
       <Group justify="space-between" wrap="wrap">
-        <Text size="sm" c="dimmed">
+        <Text size="sm" c="dimmed" data-testid="pagination-summary">
           Showing {rows.length === 0 ? 0 : startIndex + 1}–
           {Math.min(startIndex + pageSize, rows.length)} of {rows.length} rows
         </Text>
@@ -183,7 +183,7 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
       </Group>
 
       {duplicateRows && Object.keys(duplicateRows).length > 0 && (
-        <Alert color="orange" title="Duplicate rows detected">
+        <Alert color="orange" title="Duplicate rows detected" data-testid="duplicate-rows-alert">
           {Object.entries(duplicateRows).map(([fingerprint, indices]) => (
             <Text size="sm" key={fingerprint}>
               Rows {indices.map((i) => i + 1).join(', ')} are duplicates of each other

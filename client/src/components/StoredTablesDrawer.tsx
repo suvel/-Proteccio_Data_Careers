@@ -22,7 +22,14 @@ export function StoredTablesDrawer({ opened, onClose, tables }: StoredTablesDraw
   };
 
   return (
-    <Drawer opened={opened} onClose={onClose} title="Stored tables" position="right" size="lg">
+    <Drawer
+      opened={opened}
+      onClose={onClose}
+      title="Stored tables"
+      position="right"
+      size="lg"
+      data-testid="stored-tables-drawer"
+    >
       {tables.length === 0 ? (
         <Text size="sm" c="dimmed">
           No tables stored yet.
@@ -33,7 +40,7 @@ export function StoredTablesDrawer({ opened, onClose, tables }: StoredTablesDraw
             const isExpanded = expandedIndices.has(index);
             return (
               <div key={`${table.title}-${index}`}>
-                <UnstyledButton onClick={() => toggle(index)} w="100%">
+                <UnstyledButton onClick={() => toggle(index)} w="100%" data-testid="stored-table-row">
                   <Group justify="space-between">
                     <Text fw={600}>{table.title}</Text>
                     <Text size="sm" c="dimmed">

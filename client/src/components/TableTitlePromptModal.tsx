@@ -32,12 +32,17 @@ export function TableTitlePromptModal({ opened, onConfirm, onCancel }: TableTitl
           value={title}
           onChange={(event) => setTitle(event.currentTarget.value)}
           data-autofocus
+          data-testid="store-title-input"
         />
         <Group justify="flex-end" mt="sm">
-          <Button variant="default" onClick={handleCancel}>
+          <Button variant="default" onClick={handleCancel} data-testid="store-cancel-btn">
             Cancel
           </Button>
-          <Button onClick={handleConfirm} disabled={title.trim().length === 0}>
+          <Button
+            onClick={handleConfirm}
+            disabled={title.trim().length === 0}
+            data-testid="store-confirm-btn"
+          >
             Store
           </Button>
         </Group>

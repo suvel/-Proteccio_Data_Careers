@@ -1,3 +1,5 @@
 data_test
 node_modules
 dist
+client/playwright-report
+client/test-results

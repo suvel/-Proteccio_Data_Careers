@@ -51,6 +51,7 @@ export function App() {
             variant="light"
             radius="xl"
             aria-label="Stored tables"
+            data-testid="stored-tables-toggle"
             onClick={() => setDrawerOpened(true)}
           >
             <IconCloud size={20} />

@@ -14,7 +14,7 @@ app.get('/hello', (_req, res) => {
 
 app.post('/process_document', upload.single('file'), processDocument);
 
-const clientDist = path.join(__dirname, 'client', 'dist');
+const clientDist = path.join(__dirname, '..', 'client', 'dist');
 app.use(express.static(clientDist));
 
 app.get('*', (_req, res) => {
