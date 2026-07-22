@@ -28,8 +28,8 @@ export function determineDataCleanup(parsedFile: ParsedFile): ParsedFile {
   const columnIds = parsedFile.headers.map((header, index) =>
     buildColumnValueIds(
       index + 1,
-      parsedFile.rows.map((row) => row[header.header_id])
-    )
+      parsedFile.rows.map((row) => row[header.header_id]),
+    ),
   );
 
   const fingerprintGroups = new Map<string, number[]>();

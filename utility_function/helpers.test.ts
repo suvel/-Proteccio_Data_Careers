@@ -122,7 +122,13 @@ describe('computeBiasAttributes', () => {
 
   it('does not flag a Number column with a balanced sign split', () => {
     expect(
-      computeBiasAttributes('Number', [numberCell(-1), numberCell(-1), numberCell(2), numberCell(2), numberCell(3)]),
+      computeBiasAttributes('Number', [
+        numberCell(-1),
+        numberCell(-1),
+        numberCell(2),
+        numberCell(2),
+        numberCell(3),
+      ]),
     ).toEqual({ isBiased: false });
   });
 

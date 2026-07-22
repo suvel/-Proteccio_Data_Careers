@@ -23,7 +23,11 @@ function computeColumnAttributes(header: Header, rows: Row[]): ColumnAttributes 
   const { cells, nonMissing } = getNonMissingCells(header, rows);
   const dataType = mostCommonDataType(nonMissing.length > 0 ? nonMissing : cells);
 
-  const attrs: ColumnAttributes = { header_id: header.header_id, data_type: dataType, isBiased: false };
+  const attrs: ColumnAttributes = {
+    header_id: header.header_id,
+    data_type: dataType,
+    isBiased: false,
+  };
   if (nonMissing.length === 0) return attrs;
 
   if (dataType === 'Number') {
@@ -37,7 +41,12 @@ function computeColumnAttributes(header: Header, rows: Row[]): ColumnAttributes 
     Object.assign(attrs, computeDateRangeAttributes(nonMissing));
   }
 
-  if (dataType === 'String' || dataType === 'Date' || dataType === 'Time' || dataType === 'DateTime') {
+  if (
+    dataType === 'String' ||
+    dataType === 'Date' ||
+    dataType === 'Time' ||
+    dataType === 'DateTime'
+  ) {
     attrs.topValues = computeTopValues(nonMissing);
   }
 

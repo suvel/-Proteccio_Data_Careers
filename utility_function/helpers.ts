@@ -101,8 +101,13 @@ export function biasBucketKey(dataType: DataType, value: Cell['value']): string 
  * getNonMissingCells(header, rows)
  * // => { cells: [...], nonMissing: [...] } // nonMissing excludes null/blank/"-" cells
  */
-export function getNonMissingCells(header: Header, rows: Row[]): { cells: Cell[]; nonMissing: Cell[] } {
-  const cells = rows.map((row) => row[header.header_id]).filter((cell): cell is Cell => Boolean(cell));
+export function getNonMissingCells(
+  header: Header,
+  rows: Row[],
+): { cells: Cell[]; nonMissing: Cell[] } {
+  const cells = rows
+    .map((row) => row[header.header_id])
+    .filter((cell): cell is Cell => Boolean(cell));
   const nonMissing = cells.filter((cell) => !isMissingData(cell.value));
   return { cells, nonMissing };
 }
@@ -117,7 +122,9 @@ export function getNonMissingCells(header: Header, rows: Row[]): { cells: Cell[]
  * // => 1
  */
 export function computeStandardDeviationForCells(nonMissing: Cell[]): number | undefined {
-  const numbers = nonMissing.filter((cell) => typeof cell.value === 'number').map((cell) => cell.value as number);
+  const numbers = nonMissing
+    .filter((cell) => typeof cell.value === 'number')
+    .map((cell) => cell.value as number);
   return numbers.length > 0 ? standardDeviation(numbers) : undefined;
 }
 
@@ -170,9 +177,10 @@ export function computeBiasAttributes(
  * ])
  * // => { isDateRangeComplete: false, missingYears: [2021] }
  */
-export function computeDateRangeAttributes(
-  nonMissing: Cell[],
-): { isDateRangeComplete?: boolean; missingYears?: number[] } {
+export function computeDateRangeAttributes(nonMissing: Cell[]): {
+  isDateRangeComplete?: boolean;
+  missingYears?: number[];
+} {
   const years = nonMissing
     .filter((cell) => cell.value instanceof Date)
     .map((cell) => (cell.value as Date).getFullYear());
@@ -210,10 +218,14 @@ function cellValueKey(cell: Cell): string {
  * ])
  * // => { min_value: 2, max_value: 6, average_value: 4 }
  */
-export function computeNumericRangeAttributes(
-  nonMissing: Cell[],
-): { min_value?: number; max_value?: number; average_value?: number } {
-  const numbers = nonMissing.filter((cell) => typeof cell.value === 'number').map((cell) => cell.value as number);
+export function computeNumericRangeAttributes(nonMissing: Cell[]): {
+  min_value?: number;
+  max_value?: number;
+  average_value?: number;
+} {
+  const numbers = nonMissing
+    .filter((cell) => typeof cell.value === 'number')
+    .map((cell) => cell.value as number);
   if (numbers.length === 0) return {};
   return {
     min_value: Math.min(...numbers),

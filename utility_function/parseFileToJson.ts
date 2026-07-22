@@ -45,7 +45,7 @@ function buildHeaders(headerRow: unknown[]): Header[] {
       header_id: slugify(label),
       header_label: label,
       isDuplicateName: true,
-      old_label: header_label
+      old_label: header_label,
     };
   });
 }
@@ -82,7 +82,10 @@ function parseTimeString(trimmed: string): Date | null {
  * @example
  * classifyDateFormat(undefined, undefined) // => 'Date'
  */
-export function classifyDateFormat(fmt: string | undefined, fallbackDisplay: string | undefined): 'Date' | 'Time' | 'DateTime' {
+export function classifyDateFormat(
+  fmt: string | undefined,
+  fallbackDisplay: string | undefined,
+): 'Date' | 'Time' | 'DateTime' {
   if (fmt && fmt !== 'General') {
     const stripped = fmt.replace(/\[.*?\]/g, '');
     const hasTimeTokens = /[hHsS]/.test(stripped) || /am\/pm/i.test(stripped);
@@ -159,7 +162,7 @@ export function parseFileToJson(filePath: string): ParsedFile {
   const ext = path.extname(filePath).toLowerCase();
   if (!SUPPORTED_EXTENSIONS.has(ext)) {
     throw new Error(
-      `Unsupported file extension "${ext}". Expected one of: ${[...SUPPORTED_EXTENSIONS].join(', ')}`
+      `Unsupported file extension "${ext}". Expected one of: ${[...SUPPORTED_EXTENSIONS].join(', ')}`,
     );
   }
 

@@ -89,10 +89,13 @@ describe('checkDataQuality - sensitive data', () => {
   });
 
   describe('bank card number', () => {
-    it.each(['4111 1111 1111 1111', '4111-1111-1111-1111', '4111111111111111'])('flags "%s"', (value) => {
-      expect(flagsFor(value).sensitive_data).toBe(true);
-      expect(flagsFor(value).sensitive_pattern).toBe('Bank Card Number');
-    });
+    it.each(['4111 1111 1111 1111', '4111-1111-1111-1111', '4111111111111111'])(
+      'flags "%s"',
+      (value) => {
+        expect(flagsFor(value).sensitive_data).toBe(true);
+        expect(flagsFor(value).sensitive_pattern).toBe('Bank Card Number');
+      },
+    );
 
     it.each(['1234567', 'not-a-card'])('does not flag "%s"', (value) => {
       expect(flagsFor(value).sensitive_data).toBeUndefined();
@@ -152,7 +155,11 @@ describe('checkDataQuality - input validation', () => {
   });
 
   it('throws ValidationError(INVALID_HEADERS) when headers is not an array', () => {
-    const parsed = { headers: 'not-an-array', rows: [], colAttributes: [] } as unknown as ParsedFile;
+    const parsed = {
+      headers: 'not-an-array',
+      rows: [],
+      colAttributes: [],
+    } as unknown as ParsedFile;
     try {
       checkDataQuality(parsed);
       throw new Error('expected checkDataQuality to throw');
@@ -163,7 +170,11 @@ describe('checkDataQuality - input validation', () => {
   });
 
   it('throws ValidationError(INVALID_ROWS) when rows is not an array', () => {
-    const parsed = { headers: [], rows: 'not-an-array', colAttributes: [] } as unknown as ParsedFile;
+    const parsed = {
+      headers: [],
+      rows: 'not-an-array',
+      colAttributes: [],
+    } as unknown as ParsedFile;
     try {
       checkDataQuality(parsed);
       throw new Error('expected checkDataQuality to throw');

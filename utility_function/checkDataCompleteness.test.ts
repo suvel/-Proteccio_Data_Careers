@@ -85,7 +85,11 @@ describe('checkDataCompleteness - date range completeness', () => {
   });
 
   it('flags isDateRangeComplete false and lists missing years when a year is skipped', () => {
-    const attrs = colAttrsFor('Date', [new Date('2020-01-01'), new Date('2020-06-01'), new Date('2022-01-01')]);
+    const attrs = colAttrsFor('Date', [
+      new Date('2020-01-01'),
+      new Date('2020-06-01'),
+      new Date('2022-01-01'),
+    ]);
     expect(attrs.isDateRangeComplete).toBe(false);
     expect(attrs.missingYears).toEqual([2021]);
   });
@@ -240,6 +244,11 @@ describe('checkDataCompleteness - integration with parseFileToJson', () => {
   it('computes one colAttributes entry per header', () => {
     const parsed = parseFileToJson(fixture('sensitive-data.csv'));
     const colAttributes = checkDataCompleteness(parsed);
-    expect(colAttributes.map((attrs) => attrs.header_id)).toEqual(['full_name', 'email', 'phone', 'notes']);
+    expect(colAttributes.map((attrs) => attrs.header_id)).toEqual([
+      'full_name',
+      'email',
+      'phone',
+      'notes',
+    ]);
   });
 });

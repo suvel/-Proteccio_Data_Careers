@@ -2,14 +2,22 @@ import { describe, expect, it } from 'vitest';
 import { getSensitiveColumnIds, getSensitiveColumnInfo } from './sensitiveColumns';
 import type { Cell, Header, ParsedFile } from '../types';
 
-const cell = (value: Cell['value'], sensitive_data?: boolean, sensitive_pattern?: string): Cell => ({
+const cell = (
+  value: Cell['value'],
+  sensitive_data?: boolean,
+  sensitive_pattern?: string,
+): Cell => ({
   value,
   data_type: 'String',
   sensitive_data,
   sensitive_pattern,
 });
 
-const header = (header_id: string): Header => ({ header_id, header_label: header_id, isDuplicateName: false });
+const header = (header_id: string): Header => ({
+  header_id,
+  header_label: header_id,
+  isDuplicateName: false,
+});
 
 const parsedFile = (headers: Header[], rows: ParsedFile['rows']): ParsedFile => ({
   headers,
@@ -41,7 +49,11 @@ describe('getSensitiveColumnIds', () => {
     const result = parsedFile(
       [header('ssn'), header('name'), header('email')],
       [
-        { ssn: cell('111-22-3333', true), name: cell('Alice'), email: cell('alice@example.com', true) },
+        {
+          ssn: cell('111-22-3333', true),
+          name: cell('Alice'),
+          email: cell('alice@example.com', true),
+        },
         { ssn: cell('444-55-6666', true), name: cell('Bob'), email: cell('bob@example.com', true) },
       ],
     );

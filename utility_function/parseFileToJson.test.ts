@@ -125,7 +125,9 @@ describe('parseFileToJson', () => {
 
   describe('error handling', () => {
     it('throws on an unsupported file extension', () => {
-      expect(() => parseFileToJson(fixture('not-a-real-file.txt'))).toThrow(/Unsupported file extension/);
+      expect(() => parseFileToJson(fixture('not-a-real-file.txt'))).toThrow(
+        /Unsupported file extension/,
+      );
     });
 
     it('throws on a nonexistent file path', () => {

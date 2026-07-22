@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { formatCellValue, formatValue, getDisplayedTopValues, getMostRepeatingEntry } from './ResultTable';
+import {
+  formatCellValue,
+  formatValue,
+  getDisplayedTopValues,
+  getMostRepeatingEntry,
+} from './ResultTable';
 import type { Cell } from '../types';
 
 const cell = (value: Cell['value'], data_type: Cell['data_type']): Cell => ({ value, data_type });
@@ -88,7 +93,9 @@ describe('getMostRepeatingEntry', () => {
   });
 
   it('returns null when there is only one distinct value', () => {
-    expect(getMostRepeatingEntry({ data_type: 'String', topValues: [{ value: 'Male', count: 10 }] })).toBeNull();
+    expect(
+      getMostRepeatingEntry({ data_type: 'String', topValues: [{ value: 'Male', count: 10 }] }),
+    ).toBeNull();
   });
 
   it('returns null when every distinct value is unique (top count is 1)', () => {
@@ -108,7 +115,10 @@ describe('getMostRepeatingEntry', () => {
       { value: 'Apple', count: 3 },
       { value: 'Banana', count: 1 },
     ];
-    expect(getMostRepeatingEntry({ data_type: 'String', topValues })).toEqual({ value: 'Apple', count: 3 });
+    expect(getMostRepeatingEntry({ data_type: 'String', topValues })).toEqual({
+      value: 'Apple',
+      count: 3,
+    });
   });
 });
 

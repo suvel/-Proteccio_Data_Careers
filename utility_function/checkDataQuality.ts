@@ -29,6 +29,10 @@ export function checkDataQuality(parsedFile: ParsedFile): ParsedFile {
     }
     return newRow;
   });
-  const colAttributes = checkDataCompleteness({ headers: parsedFile.headers, rows, colAttributes: [] });
+  const colAttributes = checkDataCompleteness({
+    headers: parsedFile.headers,
+    rows,
+    colAttributes: [],
+  });
   return { headers: parsedFile.headers, rows, colAttributes };
 }

@@ -2,7 +2,8 @@ import * as path from 'path';
 import request from 'supertest';
 import app from '../server';
 
-const utilityFixture = (name: string) => path.join(__dirname, '../utility_function/__fixtures__', name);
+const utilityFixture = (name: string) =>
+  path.join(__dirname, '../utility_function/__fixtures__', name);
 const routeFixture = (name: string) => path.join(__dirname, '__fixtures__', name);
 
 describe('POST /process_document', () => {
@@ -20,7 +21,11 @@ describe('POST /process_document', () => {
       ]);
       expect(res.body.rows).toHaveLength(3);
       expect(res.body.rows[0].name).toEqual({ value: 'Alice', data_type: 'String' });
-      expect(res.body.rows[2].age).toEqual({ value: null, data_type: 'String', missing_data: true });
+      expect(res.body.rows[2].age).toEqual({
+        value: null,
+        data_type: 'String',
+        missing_data: true,
+      });
       expect(res.body.colAttributes).toHaveLength(3);
       expect(res.body.duplicateRows).toEqual({});
     });

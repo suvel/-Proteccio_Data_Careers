@@ -23,7 +23,10 @@ interface ResultTableProps {
 
 const PAGE_SIZE_OPTIONS = ['10', '25', '50', '100'];
 
-export function formatCellValue(value: Cell['value'] | undefined, data_type: Cell['data_type']): string {
+export function formatCellValue(
+  value: Cell['value'] | undefined,
+  data_type: Cell['data_type'],
+): string {
   if (value === null || value === undefined) return '';
   if (value instanceof Date) {
     if (data_type === 'Time') return value.toLocaleTimeString();
@@ -94,7 +97,8 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
         <Collapse in={statsOpened}>
           <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="sm" mt="sm">
             {colAttributes.map((attr) => {
-              const label = headers.find((h) => h.header_id === attr.header_id)?.header_label ?? attr.header_id;
+              const label =
+                headers.find((h) => h.header_id === attr.header_id)?.header_label ?? attr.header_id;
               const mostRepeating = getMostRepeatingEntry(attr);
               const displayedTopValues = getDisplayedTopValues(attr);
               return (
@@ -113,7 +117,8 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
                     )}
                     {mostRepeating && (
                       <Badge color="grape" size="xs">
-                        Most repeating: {formatCellValue(mostRepeating.value, attr.data_type)} ({mostRepeating.count})
+                        Most repeating: {formatCellValue(mostRepeating.value, attr.data_type)} (
+                        {mostRepeating.count})
                       </Badge>
                     )}
                     {attr.isDateRangeComplete === false && (
@@ -128,7 +133,8 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
                     )}
                     {attr.min_value !== undefined && (
                       <Text size="xs" c="dimmed">
-                        Min: {attr.min_value} · Max: {attr.max_value} · Avg: {attr.average_value?.toFixed(2)}
+                        Min: {attr.min_value} · Max: {attr.max_value} · Avg:{' '}
+                        {attr.average_value?.toFixed(2)}
                       </Text>
                     )}
                     {displayedTopValues.length > 0 && (
@@ -176,7 +182,14 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
             return (
               <Table.Tr
                 key={absoluteIndex}
-                style={isDuplicate ? { backgroundColor: '#fd7e141a', color: 'var(--mantine-color-orange-light-color)' } : undefined}
+                style={
+                  isDuplicate
+                    ? {
+                        backgroundColor: '#fd7e141a',
+                        color: 'var(--mantine-color-orange-light-color)',
+                      }
+                    : undefined
+                }
               >
                 <Table.Td>{absoluteIndex + 1}</Table.Td>
                 {headers.map((header) => {
@@ -207,8 +220,8 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
 
       <Group justify="space-between" wrap="wrap">
         <Text size="sm" c="dimmed">
-          Showing {rows.length === 0 ? 0 : startIndex + 1}–{Math.min(startIndex + pageSize, rows.length)} of{' '}
-          {rows.length} rows
+          Showing {rows.length === 0 ? 0 : startIndex + 1}–
+          {Math.min(startIndex + pageSize, rows.length)} of {rows.length} rows
         </Text>
         <Group gap="sm">
           <Select

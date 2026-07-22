@@ -34,9 +34,12 @@ describe('TIME_PATTERN', () => {
     expect(TIME_PATTERN.test(value)).toBe(true);
   });
 
-  it.each(['', 'not-a-time', '24:00', '12:60', '2023-01-15', '2023-01-15 14:30'])('rejects "%s"', (value) => {
-    expect(TIME_PATTERN.test(value)).toBe(false);
-  });
+  it.each(['', 'not-a-time', '24:00', '12:60', '2023-01-15', '2023-01-15 14:30'])(
+    'rejects "%s"',
+    (value) => {
+      expect(TIME_PATTERN.test(value)).toBe(false);
+    },
+  );
 });
 
 describe('DATETIME_PATTERNS', () => {

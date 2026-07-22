@@ -34,7 +34,9 @@ describe('processDocument', () => {
 
   it('revives a Time cell value into a Date instance', async () => {
     const parsedFile: ParsedFile = {
-      headers: [{ header_id: 'meeting_time', header_label: 'Meeting Time', isDuplicateName: false }],
+      headers: [
+        { header_id: 'meeting_time', header_label: 'Meeting Time', isDuplicateName: false },
+      ],
       rows: [{ meeting_time: { value: '1970-01-01T14:30:00.000Z', data_type: 'Time' } }],
       colAttributes: [],
     };
@@ -64,7 +66,9 @@ describe('processDocument', () => {
         { header_id: 'name', header_label: 'Name', isDuplicateName: false },
         { header_id: 'age', header_label: 'Age', isDuplicateName: false },
       ],
-      rows: [{ name: { value: 'Alice', data_type: 'String' }, age: { value: 30, data_type: 'Number' } }],
+      rows: [
+        { name: { value: 'Alice', data_type: 'String' }, age: { value: 30, data_type: 'Number' } },
+      ],
       colAttributes: [],
     };
     mockFetchResponse(parsedFile);
@@ -78,6 +82,8 @@ describe('processDocument', () => {
   it('throws with the server message when the response is not ok', async () => {
     mockFetchResponse({ message: 'Unsupported file extension' }, false);
 
-    await expect(processDocument(new File([], 'test.txt'))).rejects.toThrow('Unsupported file extension');
+    await expect(processDocument(new File([], 'test.txt'))).rejects.toThrow(
+      'Unsupported file extension',
+    );
   });
 });

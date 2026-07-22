@@ -10,7 +10,12 @@ interface SensitiveColumnsModalProps {
   onConfirm: (confirmedIds: Set<string>) => void;
 }
 
-export function SensitiveColumnsModal({ opened, columns, headers, onConfirm }: SensitiveColumnsModalProps) {
+export function SensitiveColumnsModal({
+  opened,
+  columns,
+  headers,
+  onConfirm,
+}: SensitiveColumnsModalProps) {
   const [checkedIds, setCheckedIds] = useState<Set<string>>(new Set());
 
   const toggle = (headerId: string, checked: boolean) => {
@@ -28,11 +33,18 @@ export function SensitiveColumnsModal({ opened, columns, headers, onConfirm }: S
   };
 
   return (
-    <Modal opened={opened} onClose={handleConfirm} title="Confirm sensitive columns" closeOnClickOutside={false} closeOnEscape={false} withCloseButton={false}>
+    <Modal
+      opened={opened}
+      onClose={handleConfirm}
+      title="Confirm sensitive columns"
+      closeOnClickOutside={false}
+      closeOnEscape={false}
+      withCloseButton={false}
+    >
       <Stack gap="sm">
         <Text size="sm" c="dimmed">
-          The following columns contain values that matched a sensitive-data pattern. Check any column
-          you want tagged with the "sensitive" badge in the table.
+          The following columns contain values that matched a sensitive-data pattern. Check any
+          column you want tagged with the "sensitive" badge in the table.
         </Text>
         {columns.map(({ headerId, matchedPatterns }) => {
           const label = headers.find((h) => h.header_id === headerId)?.header_label ?? headerId;
