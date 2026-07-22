@@ -1,5 +1,19 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Alert, Badge, Card, Group, Pagination, Select, SimpleGrid, Stack, Table, Text } from '@mantine/core';
+import {
+  Alert,
+  Badge,
+  Card,
+  Collapse,
+  Group,
+  Pagination,
+  Select,
+  SimpleGrid,
+  Stack,
+  Table,
+  Text,
+  UnstyledButton,
+} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
 import type { Cell, ColumnAttributes, ParsedFile, TopValueEntry } from '../types';
 
 interface ResultTableProps {
@@ -42,6 +56,7 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
 
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(25);
+  const [statsOpened, { toggle: toggleStats }] = useDisclosure(true);
 
   useEffect(() => {
     setPage(1);
@@ -67,6 +82,75 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
 
   return (
     <Stack mt="lg">
+      <Card withBorder padding="sm">
+        <UnstyledButton onClick={toggleStats}>
+          <Group justify="space-between">
+            <Text fw={600}>Column stats</Text>
+            <Text size="sm" c="dimmed">
+              {statsOpened ? 'hide' : 'show'}
+            </Text>
+          </Group>
+        </UnstyledButton>
+        <Collapse in={statsOpened}>
+          <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="sm" mt="sm">
+            {colAttributes.map((attr) => {
+              const label = headers.find((h) => h.header_id === attr.header_id)?.header_label ?? attr.header_id;
+              const mostRepeating = getMostRepeatingEntry(attr);
+              const displayedTopValues = getDisplayedTopValues(attr);
+              return (
+                <Card key={attr.header_id} withBorder padding="sm">
+                  <Stack gap={4}>
+                    <Text fw={600} size="sm">
+                      {label}
+                    </Text>
+                    <Badge color="gray" size="xs" variant="light">
+                      {attr.data_type}
+                    </Badge>
+                    {attr.standard_deviation !== undefined && (
+                      <Text size="xs" c="dimmed">
+                        Std dev: {attr.standard_deviation.toFixed(2)}
+                      </Text>
+                    )}
+                    {mostRepeating && (
+                      <Badge color="grape" size="xs">
+                        Most repeating: {formatCellValue(mostRepeating.value, attr.data_type)} ({mostRepeating.count})
+                      </Badge>
+                    )}
+                    {attr.isDateRangeComplete === false && (
+                      <Badge color="blue" size="xs">
+                        incomplete date range
+                      </Badge>
+                    )}
+                    {attr.missingYears && attr.missingYears.length > 0 && (
+                      <Text size="xs" c="dimmed">
+                        Missing years: {attr.missingYears.join(', ')}
+                      </Text>
+                    )}
+                    {attr.min_value !== undefined && (
+                      <Text size="xs" c="dimmed">
+                        Min: {attr.min_value} · Max: {attr.max_value} · Avg: {attr.average_value?.toFixed(2)}
+                      </Text>
+                    )}
+                    {displayedTopValues.length > 0 && (
+                      <Stack gap={2}>
+                        <Text size="xs" fw={600}>
+                          Top #3 values
+                        </Text>
+                        {displayedTopValues.map((tv, i) => (
+                          <Text size="xs" c="dimmed" key={i}>
+                            {formatCellValue(tv.value, attr.data_type)} ({tv.count})
+                          </Text>
+                        ))}
+                      </Stack>
+                    )}
+                  </Stack>
+                </Card>
+              );
+            })}
+          </SimpleGrid>
+        </Collapse>
+      </Card>
+
       <Table striped withTableBorder withColumnBorders>
         <Table.Thead>
           <Table.Tr>
@@ -92,7 +176,7 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
             return (
               <Table.Tr
                 key={absoluteIndex}
-                style={isDuplicate ? { backgroundColor: '#fd7e141a', color:'var(--mantine-color-orange-light-color)' } : undefined}
+                style={isDuplicate ? { backgroundColor: '#fd7e141a', color: 'var(--mantine-color-orange-light-color)' } : undefined}
               >
                 <Table.Td>{absoluteIndex + 1}</Table.Td>
                 {headers.map((header) => {
@@ -140,63 +224,6 @@ export function ResultTable({ result, confirmedSensitiveIds = new Set() }: Resul
           <Pagination total={totalPages} value={page} onChange={setPage} />
         </Group>
       </Group>
-
-      <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="sm">
-        {colAttributes.map((attr) => {
-          const label = headers.find((h) => h.header_id === attr.header_id)?.header_label ?? attr.header_id;
-          const mostRepeating = getMostRepeatingEntry(attr);
-          const displayedTopValues = getDisplayedTopValues(attr);
-          return (
-            <Card key={attr.header_id} withBorder padding="sm">
-              <Stack gap={4}>
-                <Text fw={600} size="sm">
-                  {label}
-                </Text>
-                <Badge color="gray" size="xs" variant="light">
-                  {attr.data_type}
-                </Badge>
-                {attr.standard_deviation !== undefined && (
-                  <Text size="xs" c="dimmed">
-                    Std dev: {attr.standard_deviation.toFixed(2)}
-                  </Text>
-                )}
-                {mostRepeating && (
-                  <Badge color="grape" size="xs">
-                    Most repeating: {formatCellValue(mostRepeating.value, attr.data_type)} ({mostRepeating.count})
-                  </Badge>
-                )}
-                {attr.isDateRangeComplete === false && (
-                  <Badge color="blue" size="xs">
-                    incomplete date range
-                  </Badge>
-                )}
-                {attr.missingYears && attr.missingYears.length > 0 && (
-                  <Text size="xs" c="dimmed">
-                    Missing years: {attr.missingYears.join(', ')}
-                  </Text>
-                )}
-                {attr.min_value !== undefined && (
-                  <Text size="xs" c="dimmed">
-                    Min: {attr.min_value} · Max: {attr.max_value} · Avg: {attr.average_value?.toFixed(2)}
-                  </Text>
-                )}
-                {displayedTopValues.length > 0 && (
-                  <Stack gap={2}>
-                    <Text size="xs" fw={600}>
-                      Top #3 values
-                    </Text>
-                    {displayedTopValues.map((tv, i) => (
-                      <Text size="xs" c="dimmed" key={i}>
-                        {formatCellValue(tv.value, attr.data_type)} ({tv.count})
-                      </Text>
-                    ))}
-                  </Stack>
-                )}
-              </Stack>
-            </Card>
-          );
-        })}
-      </SimpleGrid>
 
       {duplicateRows && Object.keys(duplicateRows).length > 0 && (
         <Alert color="orange" title="Duplicate rows detected">
