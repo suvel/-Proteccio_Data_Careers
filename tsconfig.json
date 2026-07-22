@@ -12,6 +12,6 @@
     "rootDir": ".",
     "declaration": true
   },
-  "include": ["utility_function/**/*.ts"],
+  "include": ["utility_function/**/*.ts", "server.ts", "middleware/**/*.ts"],
   "exclude": ["node_modules", "dist"]
 }
