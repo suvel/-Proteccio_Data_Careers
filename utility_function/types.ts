@@ -32,4 +32,5 @@ export interface ParsedFile {
   headers: Header[];
   rows: Row[];
   colAttributes: ColumnAttributes[];
+  duplicateRows?: Record<string, number[]>;
 }

@@ -1,6 +1,8 @@
 import { Cell, DataType, Header, Row } from './types';
 import { MISSING_DATA_VALUES } from './constants/patterns';
 
+const NULL_VALUE_KEY = '\0null';
+
 const BIAS_THRESHOLD = 0.7;
 
 export function isMissingData(value: Cell['value']): boolean {
@@ -160,4 +162,36 @@ export function computeDateRangeAttributes(
     if (!presentYears.has(year)) missingYears.push(year);
   }
   return { isDateRangeComplete: missingYears.length === 0, missingYears };
+}
+
+/**
+ * Maps a cell's value to a stable string key for identity/grouping purposes.
+ * @example
+ * cellValueKey({ value: new Date('2022-01-01'), data_type: 'Date' })
+ * // => '1640995200000'
+ */
+function cellValueKey(cell: Cell): string {
+  if (isMissingData(cell.value)) return NULL_VALUE_KEY;
+  if (cell.value instanceof Date) return String(cell.value.getTime());
+  return String(cell.value);
+}
+
+/**
+ * Assigns each distinct value in a column an ordinal ID based on first-seen order,
+ * formatted as "C{colIndex}_{ordinal}".
+ * @example
+ * buildColumnValueIds(1, [
+ *   { value: 'a', data_type: 'String' },
+ *   { value: 'b', data_type: 'String' },
+ *   { value: 'a', data_type: 'String' },
+ * ])
+ * // => ['C1_1', 'C1_2', 'C1_1']
+ */
+export function buildColumnValueIds(colIndex: number, cells: Cell[]): string[] {
+  const ordinals = new Map<string, number>();
+  return cells.map((cell) => {
+    const key = cellValueKey(cell);
+    if (!ordinals.has(key)) ordinals.set(key, ordinals.size + 1);
+    return `C${colIndex}_${ordinals.get(key)}`;
+  });
 }
