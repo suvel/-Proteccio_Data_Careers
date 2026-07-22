@@ -18,7 +18,18 @@ export interface Row {
   [header_id: string]: Cell;
 }
 
+export interface ColumnAttributes {
+  header_id: string;
+  data_type: DataType;
+  standard_deviation?: number;
+  isBiased: boolean;
+  biasedValue?: string;
+  isDateRangeComplete?: boolean;
+  missingYears?: number[];
+}
+
 export interface ParsedFile {
   headers: Header[];
   rows: Row[];
+  colAttributes: ColumnAttributes[];
 }

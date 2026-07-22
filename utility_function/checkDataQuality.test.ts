@@ -8,6 +8,7 @@ const fixture = (name: string) => path.join(__dirname, '__fixtures__', name);
 const wrap = (value: Cell['value']): ParsedFile => ({
   headers: [{ header_id: 'col', header_label: 'Col', isDuplicateName: false }],
   rows: [{ col: { value, data_type: 'String' } }],
+  colAttributes: [],
 });
 
 const flagsFor = (value: Cell['value']) => checkDataQuality(wrap(value)).rows[0].col;

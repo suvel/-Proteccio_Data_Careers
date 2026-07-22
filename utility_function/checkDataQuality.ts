@@ -1,17 +1,12 @@
 import { Cell, ParsedFile, Row } from './types';
-import { SENSITIVE_DATA_PATTERNS, MISSING_DATA_VALUES } from './constants/patterns';
+import { SENSITIVE_DATA_PATTERNS } from './constants/patterns';
+import { checkDataCompleteness } from './checkDataCompleteness';
+import { isMissingData } from './helpers';
 
 function isSensitiveData(value: Cell['value']): boolean {
   if (typeof value !== 'string') return false;
   const trimmed = value.trim();
   return SENSITIVE_DATA_PATTERNS.some((pattern) => pattern.test(trimmed));
-}
-
-function isMissingData(value: Cell['value']): boolean {
-  if (value === null) return true;
-  if (typeof value !== 'string') return false;
-  const trimmed = value.trim();
-  return trimmed === '' || MISSING_DATA_VALUES.includes(trimmed);
 }
 
 function evaluateCell(cell: Cell): Cell {
@@ -29,5 +24,6 @@ export function checkDataQuality(parsedFile: ParsedFile): ParsedFile {
     }
     return newRow;
   });
-  return { headers: parsedFile.headers, rows };
+  const colAttributes = checkDataCompleteness({ headers: parsedFile.headers, rows, colAttributes: [] });
+  return { headers: parsedFile.headers, rows, colAttributes };
 }
