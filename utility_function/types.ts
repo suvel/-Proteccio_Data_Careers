@@ -37,11 +37,17 @@ export interface ColumnAttributes {
   average_value?: number;
   topValues?: TopValueEntry[];
   qualityScore: number;
+  consistencyScore: number;
 }
 
 export interface ColumnQualityScore {
   header_id: string;
   qualityScore: number;
+}
+
+export interface ColumnConsistencyScore {
+  header_id: string;
+  consistencyScore: number;
 }
 
 export interface ParsedFile {

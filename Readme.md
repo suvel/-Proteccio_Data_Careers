@@ -41,6 +41,21 @@ For every column, we look at all the cells that exist for it across the rows and
 qualityScore = 100 * (non-missing cells) / (total cells in the column)
 ```
 
+## Data Consistency Score
+
+Each column card shows a `Consistency: X%` badge that measures how uniformly a column's
+values match its detected data type.
+
+**How it's calculated**
+
+For every column, we first determine its majority data type (the most common type
+across its non-missing cells). We then count how many non-missing cells actually match
+that majority type:
+
+```
+consistencyScore = 100 * (cells matching the column's majority data type) / (non-missing cells in the column)
+```
+
 ## Pointer for were unable to covered in Assignments 😓
 
 - Did not test the for application with file more that 100 rows
