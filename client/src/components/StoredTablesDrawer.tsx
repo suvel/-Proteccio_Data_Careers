@@ -9,7 +9,7 @@ import {
   Text,
   UnstyledButton,
 } from '@mantine/core';
-import { IconDownload, IconTrash } from '@tabler/icons-react';
+import { IconDownload, IconTrash, IconEye, IconEyeClosed } from '@tabler/icons-react';
 import { ColumnStatsGrid } from './ColumnStatsGrid';
 import type { StoredTable } from '../types';
 
@@ -71,7 +71,6 @@ export function StoredTablesDrawer({
             return (
               <div key={table.id}>
                 <UnstyledButton
-                  onClick={() => toggle(table.id)}
                   w="100%"
                   data-testid="stored-table-row"
                 >
@@ -79,8 +78,20 @@ export function StoredTablesDrawer({
                     <Text fw={600}>{table.title}</Text>
                     <Group gap="xs">
                       <Text size="sm" c="dimmed">
-                        {table.tableObject.rows.length} rows · {isExpanded ? 'hide' : 'show'} stats
+                        {table.tableObject.rows.length} rows
                       </Text>
+                      <ActionIcon
+                        variant="light"
+                        color="blue"
+                        aria-label="Load table"
+                        data-testid="stored-table-load-btn"
+                        onClick={(event) => {
+                          event.stopPropagation();
+                          toggle(table.id);
+                        }}
+                      >
+                        {isExpanded ? <IconEyeClosed size={16} /> : <IconEye size={16} />}
+                      </ActionIcon>
                       <ActionIcon
                         variant="light"
                         color="blue"
