@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ActionIcon, Collapse, Drawer, Group, Stack, Text, UnstyledButton } from '@mantine/core';
+import { ActionIcon, Alert, Collapse, Drawer, Group, Stack, Text, UnstyledButton } from '@mantine/core';
 import { IconDownload, IconTrash } from '@tabler/icons-react';
 import { ColumnStatsGrid } from './ColumnStatsGrid';
 import type { StoredTable } from '../types';
@@ -10,6 +10,7 @@ interface StoredTablesDrawerProps {
   tables: StoredTable[];
   onLoad: (table: StoredTable) => void;
   onDelete: (id: string) => void;
+  error: string | null;
 }
 
 export function StoredTablesDrawer({
@@ -18,6 +19,7 @@ export function StoredTablesDrawer({
   tables,
   onLoad,
   onDelete,
+  error,
 }: StoredTablesDrawerProps) {
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
@@ -39,6 +41,11 @@ export function StoredTablesDrawer({
       size="lg"
       data-testid="stored-tables-drawer"
     >
+      {error && (
+        <Alert color="red" title="Stored tables action failed" mb="md" data-testid="stored-tables-drawer-error-alert">
+          {error}
+        </Alert>
+      )}
       {tables.length === 0 ? (
         <Text size="sm" c="dimmed">
           No tables stored yet.

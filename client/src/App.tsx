@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActionIcon, Container, Group, Indicator, Title } from '@mantine/core';
+import { ActionIcon, Alert, Container, Group, Indicator, Title } from '@mantine/core';
 import { IconCloud } from '@tabler/icons-react';
 import { UploadForm } from './components/UploadForm';
 import { ResultTable } from './components/ResultTable';
@@ -18,11 +18,20 @@ export function App() {
   const [storedTables, setStoredTables] = useState<StoredTable[]>([]);
   const [storeModalOpened, setStoreModalOpened] = useState(false);
   const [drawerOpened, setDrawerOpened] = useState(false);
+  const [drawerError, setDrawerError] = useState<string | null>(null);
+  const [storeError, setStoreError] = useState<string | null>(null);
 
   useEffect(() => {
     listStoredTables()
-      .then(setStoredTables)
-      .catch((err) => console.error('Failed to load stored tables', err));
+      .then((tables) => {
+        setStoredTables(tables);
+        setDrawerError(null);
+      })
+      .catch((err) => {
+        console.error('Failed to load stored tables', err);
+        setDrawerError(err instanceof Error ? err.message : 'Failed to load stored tables');
+        setDrawerOpened(true);
+      });
   }, []);
 
   const handleResult = (newResult: ParsedFile) => {
@@ -41,16 +50,22 @@ export function App() {
   };
 
   const handleStoreConfirm = async (title: string) => {
-    if (result) {
-      try {
-        const stored = await storeTable(title, result);
-        setStoredTables((prev) => [...prev, stored]);
-      } catch (err) {
-        console.error('Failed to store table', err);
-      }
+    if (!result) {
+      setStoreModalOpened(false);
+      return;
     }
-    setStoreModalOpened(false);
-    handleClearView();
+    try {
+      const stored = await storeTable(title, result);
+      setStoredTables((prev) => [...prev, stored]);
+      setStoreError(null);
+      setStoreModalOpened(false);
+      handleClearView();
+    } catch (err) {
+      console.error('Failed to store table', err);
+      setStoreModalOpened(false);
+      handleClearView();
+      setStoreError(err instanceof Error ? err.message : 'Failed to store table');
+    }
   };
 
   const handleLoadStoredTable = (table: StoredTable) => {
@@ -62,8 +77,10 @@ export function App() {
     try {
       await deleteStoredTable(id);
       setStoredTables((prev) => prev.filter((table) => table.id !== id));
+      setDrawerError(null);
     } catch (err) {
       console.error('Failed to delete stored table', err);
+      setDrawerError(err instanceof Error ? err.message : 'Failed to delete stored table');
     }
   };
 
@@ -89,6 +106,11 @@ export function App() {
         showStoreButton={!!result}
         onStoreClick={() => setStoreModalOpened(true)}
       />
+      {storeError && (
+        <Alert color="red" mt="md" title="Failed to store table" mb="md" data-testid="store-table-error-alert">
+          {storeError}
+        </Alert>
+      )}
       {result && <ResultTable result={result} confirmedSensitiveIds={confirmedSensitiveIds} />}
       {result && (
         <SensitiveColumnsModal
@@ -108,10 +130,14 @@ export function App() {
       />
       <StoredTablesDrawer
         opened={drawerOpened}
-        onClose={() => setDrawerOpened(false)}
+        onClose={() => {
+          setDrawerOpened(false);
+          setDrawerError(null);
+        }}
         tables={storedTables}
         onLoad={handleLoadStoredTable}
         onDelete={handleDeleteStoredTable}
+        error={drawerError}
       />
     </Container>
   );
