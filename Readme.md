@@ -28,12 +28,12 @@ I zip the below files
 4. exeecute start script in root
 
 ```
-
-## Data Quality Score
+### Calculation 
+#### Data Quality Score
 
 Each column card shows a `Quality: X%` badge that measures how complete that column's data is.
 
-**How it's calculated**
+How it's calculated
 
 For every column, we look at all the cells that exist for it across the rows and count how many are "non-missing":
 
@@ -41,12 +41,12 @@ For every column, we look at all the cells that exist for it across the rows and
 qualityScore = 100 * (non-missing cells) / (total cells in the column)
 ```
 
-## Data Consistency Score
+#### Data Consistency Score
 
 Each column card shows a `Consistency: X%` badge that measures how uniformly a column's
 values match its detected data type.
 
-**How it's calculated**
+How it's calculated
 
 For every column, we first determine its majority data type (the most common type
 across its non-missing cells). We then count how many non-missing cells actually match
