@@ -3,7 +3,9 @@ import { Cell, DataType, ParsedFile } from './types';
 import { ValidationError } from './errors';
 import { ValidationErrorCode } from './constants/errorCodes';
 
-const wrapColumns = (columns: Record<string, { data_type: DataType; values: Cell['value'][] }>): ParsedFile => {
+const wrapColumns = (
+  columns: Record<string, { data_type: DataType; values: Cell['value'][] }>,
+): ParsedFile => {
   const headerIds = Object.keys(columns);
   const rowCount = Math.max(...headerIds.map((id) => columns[id].values.length));
   return {

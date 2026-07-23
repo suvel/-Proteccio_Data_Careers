@@ -28,7 +28,9 @@ I zip the below files
 4. exeecute start script in root
 
 ```
-### Calculation 
+
+### Calculation
+
 #### Data Quality Score
 
 Each column card shows a `Quality: X%` badge that measures how complete that column's data is.

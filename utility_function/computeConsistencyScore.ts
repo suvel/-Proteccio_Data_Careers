@@ -12,17 +12,19 @@ import { getNonMissingCells, mostCommonDataType, validateParsedFile } from './he
  * )
  * // => { header_id: 'age', consistencyScore: 50 }
  */
-export function computeColumnConsistencyScore(
-  header: Header,
-  rows: Row[],
-): ColumnConsistencyScore {
+export function computeColumnConsistencyScore(header: Header, rows: Row[]): ColumnConsistencyScore {
   const { cells, nonMissing } = getNonMissingCells(header, rows);
   if (nonMissing.length === 0) return { header_id: header.header_id, consistencyScore: 0 };
 
   const dataType = mostCommonDataType(nonMissing.length > 0 ? nonMissing : cells);
   const matching = nonMissing.filter((cell) => cell.data_type === dataType);
 
-  console.log({ header_id: header.header_id, dataType, matching: matching.length, total: nonMissing.length });
+  console.log({
+    header_id: header.header_id,
+    dataType,
+    matching: matching.length,
+    total: nonMissing.length,
+  });
 
   const consistencyScore = (100 * matching.length) / nonMissing.length;
   return { header_id: header.header_id, consistencyScore };
@@ -50,7 +52,6 @@ export function computeConsistencyScore(parsedFile: ParsedFile): {
   const overallConsistencyScore =
     columnScores.length === 0
       ? 0
-      : columnScores.reduce((sum, score) => sum + score.consistencyScore, 0) /
-      columnScores.length;
+      : columnScores.reduce((sum, score) => sum + score.consistencyScore, 0) / columnScores.length;
   return { overallConsistencyScore, columnScores };
 }

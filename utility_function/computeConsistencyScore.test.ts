@@ -26,8 +26,11 @@ const wrapColumns = (
   };
 };
 
-const wrapColumn = (data_type: DataType, values: Cell['value'][], cellTypes?: DataType[]): ParsedFile =>
-  wrapColumns({ col: { data_type, values, cellTypes } });
+const wrapColumn = (
+  data_type: DataType,
+  values: Cell['value'][],
+  cellTypes?: DataType[],
+): ParsedFile => wrapColumns({ col: { data_type, values, cellTypes } });
 
 describe('computeConsistencyScore - per column', () => {
   it('scores a fully-consistent column at 100', () => {
@@ -42,11 +45,7 @@ describe('computeConsistencyScore - per column', () => {
 
   it('scores a column with mismatched types at the correct percentage', () => {
     const { columnScores } = computeConsistencyScore(
-      wrapColumn(
-        'Number',
-        [1, 'two', 3, 4],
-        ['Number', 'String', 'Number', 'Number'],
-      ),
+      wrapColumn('Number', [1, 'two', 3, 4], ['Number', 'String', 'Number', 'Number']),
     );
     expect(columnScores[0].consistencyScore).toBeCloseTo(75, 5);
   });

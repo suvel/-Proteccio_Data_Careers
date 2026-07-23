@@ -70,10 +70,7 @@ export function StoredTablesDrawer({
             const isExpanded = expandedIds.has(table.id);
             return (
               <div key={table.id}>
-                <UnstyledButton
-                  w="100%"
-                  data-testid="stored-table-row"
-                >
+                <UnstyledButton w="100%" data-testid="stored-table-row">
                   <Group justify="space-between">
                     <Text fw={600}>{table.title}</Text>
                     <Group gap="xs">
