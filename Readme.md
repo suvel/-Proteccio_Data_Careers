@@ -29,10 +29,21 @@ I zip the below files
 
 ```
 
+## Data Quality Score
+
+Each column card shows a `Quality: X%` badge that measures how complete that column's data is.
+
+**How it's calculated**
+
+For every column, we look at all the cells that exist for it across the rows and count how many are "non-missing":
+
+```
+qualityScore = 100 * (non-missing cells) / (total cells in the column)
+```
+
 ## Pointer for were unable to covered in Assignments 😓
 
 - Did not test the for application with file more that 100 rows
-- Unable calculate score to objectify the uploaed file
 
 ## Thought that went into developing the application captured
 
