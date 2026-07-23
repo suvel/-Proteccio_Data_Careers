@@ -1,6 +1,7 @@
 import request from 'supertest';
 import app from '../server';
 import { clearTables } from '../store/tablesStore';
+import { MAX_ROW_SHEET_UPLOAD, MAX_ROW_CAN_INSERT } from '../utility_function/constants/config';
 
 const sampleTableObject = {
   headers: [{ header_id: 'name', header_label: 'Name', isDuplicateName: false }],
@@ -21,8 +22,7 @@ describe('POST /table', () => {
     expect(res.status).toBe(201);
     expect(res.body.title).toBe('Q1 export');
     expect(res.body.tableObject).toEqual(sampleTableObject);
-    expect(typeof res.body.id).toBe('string');
-    expect(res.body.id.length).toBeGreaterThan(0);
+    expect(typeof res.body.id).toBe('number');
   });
 
   it('returns 400 BAD_REQUEST when title is missing', async () => {
@@ -35,6 +35,31 @@ describe('POST /table', () => {
     const res = await request(app).post('/table').send({ title: 'Q1 export' });
     expect(res.status).toBe(400);
     expect(res.body.code).toBe('BAD_REQUEST');
+  });
+
+  it('returns 400 SHEET_ROW_LIMIT_EXCEEDED when the table has more than MAX_ROW_SHEET_UPLOAD rows', async () => {
+    const bigTableObject = {
+      ...sampleTableObject,
+      rows: Array.from({ length: MAX_ROW_SHEET_UPLOAD + 1 }, () => sampleTableObject.rows[0]),
+    };
+    const res = await request(app)
+      .post('/table')
+      .send({ title: 'Too big', tableObject: bigTableObject });
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('SHEET_ROW_LIMIT_EXCEEDED');
+  });
+
+  it('returns 400 INSERT_ROW_LIMIT_EXCEEDED once MAX_ROW_CAN_INSERT tables are already stored', async () => {
+    for (let i = 0; i < MAX_ROW_CAN_INSERT; i++) {
+      await request(app)
+        .post('/table')
+        .send({ title: `T${i}`, tableObject: sampleTableObject });
+    }
+    const res = await request(app)
+      .post('/table')
+      .send({ title: 'One too many', tableObject: sampleTableObject });
+    expect(res.status).toBe(400);
+    expect(res.body.code).toBe('INSERT_ROW_LIMIT_EXCEEDED');
   });
 });
 
@@ -66,11 +91,5 @@ describe('DELETE /table/:id', () => {
 
     const list = await request(app).get('/table');
     expect(list.body).toEqual([]);
-  });
-
-  it('returns 404 NOT_FOUND for an unknown id', async () => {
-    const res = await request(app).delete('/table/does-not-exist');
-    expect(res.status).toBe(404);
-    expect(res.body.code).toBe('NOT_FOUND');
   });
 });

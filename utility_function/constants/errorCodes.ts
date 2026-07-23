@@ -1,3 +1,5 @@
+import { MAX_ROW_SHEET_UPLOAD, MAX_ROW_CAN_INSERT } from './config';
+
 /**
  * Internal validation codes thrown by checkDataCompleteness.ts, checkDataQuality.ts,
  * and determineDataCleanup.ts. These carry implementation detail meant for server-side
@@ -33,6 +35,8 @@ export enum RestErrorCode {
   TOO_MANY_REQUESTS = 'TOO_MANY_REQUESTS',
   INTERNAL_SERVER_ERROR = 'INTERNAL_SERVER_ERROR',
   SERVICE_UNAVAILABLE = 'SERVICE_UNAVAILABLE',
+  SHEET_ROW_LIMIT_EXCEEDED = 'SHEET_ROW_LIMIT_EXCEEDED',
+  INSERT_ROW_LIMIT_EXCEEDED = 'INSERT_ROW_LIMIT_EXCEEDED',
 }
 
 export const REST_ERROR_MAP: Record<RestErrorCode, { message: string; httpStatus: number }> = {
@@ -77,5 +81,13 @@ export const REST_ERROR_MAP: Record<RestErrorCode, { message: string; httpStatus
   [RestErrorCode.SERVICE_UNAVAILABLE]: {
     message: 'The service is temporarily unable to handle the request.',
     httpStatus: 503,
+  },
+  [RestErrorCode.SHEET_ROW_LIMIT_EXCEEDED]: {
+    message: `A table with more than ${MAX_ROW_SHEET_UPLOAD} rows cannot be stored in the cloud.`,
+    httpStatus: 400,
+  },
+  [RestErrorCode.INSERT_ROW_LIMIT_EXCEEDED]: {
+    message: `For now we allow only ${MAX_ROW_CAN_INSERT} rows to be stored in the cloud.`,
+    httpStatus: 400,
   },
 };
