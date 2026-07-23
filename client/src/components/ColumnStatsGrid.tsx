@@ -7,6 +7,12 @@ interface ColumnStatsGridProps {
   colAttributes: ColumnAttributes[];
 }
 
+function scoreColor(score: number): string {
+  if (score >= 80) return 'green';
+  if (score >= 50) return 'yellow';
+  return 'red';
+}
+
 export function ColumnStatsGrid({ headers, colAttributes }: ColumnStatsGridProps) {
   return (
     <SimpleGrid cols={{ base: 1, sm: 2, md: 3 }} spacing="sm">
@@ -23,6 +29,12 @@ export function ColumnStatsGrid({ headers, colAttributes }: ColumnStatsGridProps
               </Text>
               <Badge color="gray" size="xs" variant="light">
                 {attr.data_type}
+              </Badge>
+              <Badge color={scoreColor(attr.qualityScore)} size="xs">
+                Quality: {attr?.qualityScore?.toFixed(0)}%
+              </Badge>
+              <Badge color={scoreColor(attr.consistencyScore)} size="xs">
+                Consistency: {attr?.consistencyScore?.toFixed(0)}%
               </Badge>
               {attr.standard_deviation !== undefined && (
                 <Text size="xs" c="dimmed">

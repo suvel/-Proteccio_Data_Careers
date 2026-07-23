@@ -29,10 +29,51 @@ I zip the below files
 
 ```
 
+### Calculation
+
+#### Data Quality Score
+
+Each column card shows a `Quality: X%` badge that measures how complete that column's data is.
+
+How it's calculated
+
+For every column, we look at all the cells that exist for it across the rows and count how many are "non-missing":
+
+```
+qualityScore = 100 * (non-missing cells) / (total cells in the column)
+```
+
+#### Data Consistency Score
+
+Each column card shows a `Consistency: X%` badge that measures how uniformly a column's
+values match its detected data type.
+
+How it's calculated
+
+For every column, we first determine its majority data type (the most common type
+across its non-missing cells). We then count how many non-missing cells actually match
+that majority type:
+
+```
+consistencyScore = 100 * (cells matching the column's majority data type) / (non-missing cells in the column)
+```
+
+## Upload and storage limits
+
+The application controls how many rows can be uploaded in a sheet and how many rows can be stored in the cloud through two constants:
+
+```
+utility_function/constants/config.ts
+client\src\constants\config.ts
+
+MAX_ROW_SHEET_UPLOAD = 100; // max rows allowed in a single uploaded sheet
+MAX_ROW_CAN_INSERT = 5;     // max rows allowed to be stored in the cloud (across inserts)
+
+```
+
 ## Pointer for were unable to covered in Assignments 😓
 
 - Did not test the for application with file more that 100 rows
-- Unable calculate score to objectify the uploaed file
 
 ## Thought that went into developing the application captured
 
