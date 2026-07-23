@@ -1,9 +1,5 @@
 import { Badge, Card, SimpleGrid, Stack, Text } from '@mantine/core';
-import {
-  formatCellValue,
-  getDisplayedTopValues,
-  getMostRepeatingEntry,
-} from './ResultTable';
+import { formatCellValue, getDisplayedTopValues, getMostRepeatingEntry } from './ResultTable';
 import type { ColumnAttributes, Header } from '../types';
 
 interface ColumnStatsGridProps {

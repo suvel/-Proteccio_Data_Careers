@@ -34,7 +34,9 @@ test.describe('Row/table limit handling', () => {
     await expect(page.getByTestId('store-title-input')).toBeHidden();
   });
 
-  test('rejects storing once MAX_ROW_CAN_INSERT tables are already in the cloud', async ({ page }) => {
+  test('rejects storing once MAX_ROW_CAN_INSERT tables are already in the cloud', async ({
+    page,
+  }) => {
     await page.route('**/table', (route) => {
       if (route.request().method() !== 'GET') return route.continue();
       return route.fulfill({

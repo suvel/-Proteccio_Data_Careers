@@ -20,7 +20,7 @@ export async function addTable(title: string, tableObject: ParsedFile): Promise<
     .select('id, title, tableObject')
     .single();
   if (error) {
-    console.log({error})
+    console.log({ error });
     throw error;
   }
 

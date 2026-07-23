@@ -1,5 +1,14 @@
 import { useState } from 'react';
-import { ActionIcon, Alert, Collapse, Drawer, Group, Stack, Text, UnstyledButton } from '@mantine/core';
+import {
+  ActionIcon,
+  Alert,
+  Collapse,
+  Drawer,
+  Group,
+  Stack,
+  Text,
+  UnstyledButton,
+} from '@mantine/core';
 import { IconDownload, IconTrash } from '@tabler/icons-react';
 import { ColumnStatsGrid } from './ColumnStatsGrid';
 import type { StoredTable } from '../types';
@@ -42,7 +51,12 @@ export function StoredTablesDrawer({
       data-testid="stored-tables-drawer"
     >
       {error && (
-        <Alert color="red" title="Stored tables action failed" mb="md" data-testid="stored-tables-drawer-error-alert">
+        <Alert
+          color="red"
+          title="Stored tables action failed"
+          mb="md"
+          data-testid="stored-tables-drawer-error-alert"
+        >
           {error}
         </Alert>
       )}
@@ -56,13 +70,16 @@ export function StoredTablesDrawer({
             const isExpanded = expandedIds.has(table.id);
             return (
               <div key={table.id}>
-                <UnstyledButton onClick={() => toggle(table.id)} w="100%" data-testid="stored-table-row">
+                <UnstyledButton
+                  onClick={() => toggle(table.id)}
+                  w="100%"
+                  data-testid="stored-table-row"
+                >
                   <Group justify="space-between">
                     <Text fw={600}>{table.title}</Text>
                     <Group gap="xs">
                       <Text size="sm" c="dimmed">
-                        {table.tableObject.rows.length} rows ·{' '}
-                        {isExpanded ? 'hide' : 'show'} stats
+                        {table.tableObject.rows.length} rows · {isExpanded ? 'hide' : 'show'} stats
                       </Text>
                       <ActionIcon
                         variant="light"
@@ -74,7 +91,7 @@ export function StoredTablesDrawer({
                           onLoad(table);
                         }}
                       >
-                        <IconDownload size={16} />{" "}{table.tableObject.download_count??'0'}
+                        <IconDownload size={16} /> {table.tableObject.download_count ?? '0'}
                       </ActionIcon>
                       <ActionIcon
                         variant="light"

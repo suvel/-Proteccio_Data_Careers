@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActionIcon, Alert, Container, Group, Indicator, Text, Title } from '@mantine/core';
+import { ActionIcon, Alert, Container, Group, Indicator, Title } from '@mantine/core';
 import { IconCloud } from '@tabler/icons-react';
 import { UploadForm } from './components/UploadForm';
 import { ResultTable } from './components/ResultTable';
@@ -7,7 +7,12 @@ import { SensitiveColumnsModal } from './components/SensitiveColumnsModal';
 import { TableTitlePromptModal } from './components/TableTitlePromptModal';
 import { StoredTablesDrawer } from './components/StoredTablesDrawer';
 import { getSensitiveColumnInfo, type SensitiveColumnInfo } from './utils/sensitiveColumns';
-import { storeTable, listStoredTables, deleteStoredTable, incrementTableDownload } from './api/storedTables';
+import {
+  storeTable,
+  listStoredTables,
+  deleteStoredTable,
+  incrementTableDownload,
+} from './api/storedTables';
 import { MAX_ROW_SHEET_UPLOAD, MAX_ROW_CAN_INSERT } from './constants/config';
 import type { ParsedFile, StoredTable } from './types';
 
@@ -58,14 +63,14 @@ export function App() {
     if (result.rows.length > MAX_ROW_SHEET_UPLOAD) {
       setStoreModalOpened(false);
       setStoreError(
-        `This table has ${result.rows.length} rows; only tables with up to ${MAX_ROW_SHEET_UPLOAD} rows can be stored in the cloud.`
+        `This table has ${result.rows.length} rows; only tables with up to ${MAX_ROW_SHEET_UPLOAD} rows can be stored in the cloud.`,
       );
       return;
     }
     if (storedTables.length + 1 > MAX_ROW_CAN_INSERT) {
       setStoreModalOpened(false);
       setStoreError(
-        `Cloud storage already has ${storedTables.length} table(s); storing this one would exceed the ${MAX_ROW_CAN_INSERT}-table limit.`
+        `Cloud storage already has ${storedTables.length} table(s); storing this one would exceed the ${MAX_ROW_CAN_INSERT}-table limit.`,
       );
       return;
     }
@@ -129,7 +134,13 @@ export function App() {
         onStoreClick={() => setStoreModalOpened(true)}
       />
       {storeError && (
-        <Alert color="red" mt="md" title="Failed to store table" mb="md" data-testid="store-table-error-alert">
+        <Alert
+          color="red"
+          mt="md"
+          title="Failed to store table"
+          mb="md"
+          data-testid="store-table-error-alert"
+        >
           {storeError}
         </Alert>
       )}

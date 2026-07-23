@@ -1,18 +1,16 @@
-
-This is project has been built and deployed for a  assignment submission. 
+This is project has been built and deployed for a assignment submission.
 
 [click on here to view demo](https://protecciodatacareers-production.up.railway.app/)
-
 
 ## How the run project in local
 
 ```
 // naviagte to the root of the file
-1. npm i 
+1. npm i
 2. npm run dev
-3. open another terminal 
+3. open another terminal
 4. cd client
-5. npm i 
+5. npm i
 6. npm run dev
 
 epress server will running in 3000 and forentend should be running 3001
@@ -33,10 +31,8 @@ I zip the below files
 
 ## Pointer for were unable to covered in Assignments 😓
 
-* Did not test the for application with file more that 100 rows
-* Unable calculate score to objectify the uploaed file
-
-
+- Did not test the for application with file more that 100 rows
+- Unable calculate score to objectify the uploaed file
 
 ## Thought that went into developing the application captured
 

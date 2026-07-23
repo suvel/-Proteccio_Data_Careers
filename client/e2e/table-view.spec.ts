@@ -60,6 +60,8 @@ test.describe('Result table view', () => {
     await uploadAndConfirm(page, DUPLICATES_FIXTURE);
 
     await expect(page.getByTestId('duplicate-rows-alert')).toBeVisible();
-    await expect(page.getByTestId('duplicate-rows-alert')).toContainText('duplicates of each other');
+    await expect(page.getByTestId('duplicate-rows-alert')).toContainText(
+      'duplicates of each other',
+    );
   });
 });
