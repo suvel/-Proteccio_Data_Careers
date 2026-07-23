@@ -8,8 +8,8 @@ const sampleTableObject = {
   colAttributes: [],
 };
 
-beforeEach(() => {
-  clearTables();
+beforeEach(async () => {
+  await clearTables();
 });
 
 describe('POST /table', () => {

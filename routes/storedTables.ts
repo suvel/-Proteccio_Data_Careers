@@ -4,7 +4,7 @@ import { validateParsedFile } from '../utility_function/helpers';
 import { PublicApiError, toPublicApiError } from '../utility_function/errors';
 import { RestErrorCode } from '../utility_function/constants/errorCodes';
 
-export const storeTable: RequestHandler = (req, res, next) => {
+export const storeTable: RequestHandler = async (req, res, next) => {
   const { title, tableObject } = req.body ?? {};
 
   if (typeof title !== 'string' || title.trim().length === 0) {
@@ -19,20 +19,33 @@ export const storeTable: RequestHandler = (req, res, next) => {
     return;
   }
 
-  const table = addTable(title, tableObject);
-  res.status(201).json(table);
-};
-
-export const listStoredTables: RequestHandler = (_req, res) => {
-  res.json(listTables());
-};
-
-export const deleteStoredTable: RequestHandler = (req, res, next) => {
-  const { id } = req.params;
-  const deleted = deleteTable(id);
-  if (!deleted) {
-    next(new PublicApiError(RestErrorCode.NOT_FOUND));
-    return;
+  try {
+    const table = await addTable(title, tableObject);
+    res.status(201).json(table);
+  } catch (err) {
+    next(toPublicApiError(err));
   }
-  res.status(204).send();
+};
+
+export const listStoredTables: RequestHandler = async (_req, res, next) => {
+  try {
+    res.json(await listTables());
+  } catch (err) {
+    console.log(JSON.stringify(err, null, 2));
+    next(toPublicApiError(err));
+  }
+};
+
+export const deleteStoredTable: RequestHandler = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const deleted = await deleteTable(id);
+    if (!deleted) {
+      next(new PublicApiError(RestErrorCode.NOT_FOUND));
+      return;
+    }
+    res.status(204).send();
+  } catch (err) {
+    next(toPublicApiError(err));
+  }
 };
