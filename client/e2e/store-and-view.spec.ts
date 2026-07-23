@@ -7,6 +7,8 @@ const DATA_TEST_DIR = path.resolve(dirname, '..', '..', 'data_test');
 const CSV_FIXTURE = path.join(DATA_TEST_DIR, 'INFY-selected-columns.csv');
 
 test.describe('Store and view stored tables', () => {
+  test.describe.configure({ mode: 'serial' });
+
   test('shows "No tables stored yet." before anything has been stored', async ({ page }) => {
     await page.goto('/');
     await page.getByTestId('stored-tables-toggle').click();
@@ -44,6 +46,9 @@ test.describe('Store and view stored tables', () => {
 
     await storedRow.click();
     await expect(storedRow).toContainText('hide stats');
+
+    await storedRow.getByTestId('stored-table-drop-btn').click();
+    await expect(storedRow).toBeHidden();
   });
 
   test('Load button loads the stored table into the main view and closes the drawer', async ({
@@ -66,6 +71,14 @@ test.describe('Store and view stored tables', () => {
 
     await expect(drawer).toBeHidden();
     await expect(page.getByTestId('result-table')).toBeVisible();
+
+    await page.getByTestId('stored-tables-toggle').click();
+    const cleanupDrawer = page.getByTestId('stored-tables-drawer');
+    const cleanupRow = cleanupDrawer
+      .getByTestId('stored-table-row')
+      .filter({ hasText: 'Q1 customer export' });
+    await cleanupRow.getByTestId('stored-table-drop-btn').click();
+    await expect(cleanupRow).toBeHidden();
   });
 
   test('Drop button removes the stored table from the list', async ({ page }) => {

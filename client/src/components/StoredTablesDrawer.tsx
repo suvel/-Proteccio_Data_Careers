@@ -9,7 +9,7 @@ interface StoredTablesDrawerProps {
   onClose: () => void;
   tables: StoredTable[];
   onLoad: (table: StoredTable) => void;
-  onDelete: (index: number) => void;
+  onDelete: (id: string) => void;
 }
 
 export function StoredTablesDrawer({
@@ -19,13 +19,13 @@ export function StoredTablesDrawer({
   onLoad,
   onDelete,
 }: StoredTablesDrawerProps) {
-  const [expandedIndices, setExpandedIndices] = useState<Set<number>>(new Set());
+  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set());
 
-  const toggle = (index: number) => {
-    setExpandedIndices((prev) => {
+  const toggle = (id: string) => {
+    setExpandedIds((prev) => {
       const next = new Set(prev);
-      if (next.has(index)) next.delete(index);
-      else next.add(index);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
       return next;
     });
   };
@@ -45,11 +45,11 @@ export function StoredTablesDrawer({
         </Text>
       ) : (
         <Stack gap="sm">
-          {tables.map((table, index) => {
-            const isExpanded = expandedIndices.has(index);
+          {tables.map((table) => {
+            const isExpanded = expandedIds.has(table.id);
             return (
-              <div key={`${table.title}-${index}`}>
-                <UnstyledButton onClick={() => toggle(index)} w="100%" data-testid="stored-table-row">
+              <div key={table.id}>
+                <UnstyledButton onClick={() => toggle(table.id)} w="100%" data-testid="stored-table-row">
                   <Group justify="space-between">
                     <Text fw={600}>{table.title}</Text>
                     <Group gap="xs">
@@ -75,7 +75,7 @@ export function StoredTablesDrawer({
                         data-testid="stored-table-drop-btn"
                         onClick={(event) => {
                           event.stopPropagation();
-                          onDelete(index);
+                          onDelete(table.id);
                         }}
                       >
                         <IconTrash size={16} />

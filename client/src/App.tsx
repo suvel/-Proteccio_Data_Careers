@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ActionIcon, Container, Group, Indicator, Title } from '@mantine/core';
 import { IconCloud } from '@tabler/icons-react';
 import { UploadForm } from './components/UploadForm';
@@ -7,6 +7,7 @@ import { SensitiveColumnsModal } from './components/SensitiveColumnsModal';
 import { TableTitlePromptModal } from './components/TableTitlePromptModal';
 import { StoredTablesDrawer } from './components/StoredTablesDrawer';
 import { getSensitiveColumnInfo, type SensitiveColumnInfo } from './utils/sensitiveColumns';
+import { storeTable, listStoredTables, deleteStoredTable } from './api/storedTables';
 import type { ParsedFile, StoredTable } from './types';
 
 export function App() {
@@ -17,6 +18,12 @@ export function App() {
   const [storedTables, setStoredTables] = useState<StoredTable[]>([]);
   const [storeModalOpened, setStoreModalOpened] = useState(false);
   const [drawerOpened, setDrawerOpened] = useState(false);
+
+  useEffect(() => {
+    listStoredTables()
+      .then(setStoredTables)
+      .catch((err) => console.error('Failed to load stored tables', err));
+  }, []);
 
   const handleResult = (newResult: ParsedFile) => {
     setResult(newResult);
@@ -33,9 +40,14 @@ export function App() {
     setModalOpened(false);
   };
 
-  const handleStoreConfirm = (title: string) => {
+  const handleStoreConfirm = async (title: string) => {
     if (result) {
-      setStoredTables((prev) => [...prev, { title, tableObject: result }]);
+      try {
+        const stored = await storeTable(title, result);
+        setStoredTables((prev) => [...prev, stored]);
+      } catch (err) {
+        console.error('Failed to store table', err);
+      }
     }
     setStoreModalOpened(false);
     handleClearView();
@@ -46,8 +58,13 @@ export function App() {
     setDrawerOpened(false);
   };
 
-  const handleDeleteStoredTable = (index: number) => {
-    setStoredTables((prev) => prev.filter((_, i) => i !== index));
+  const handleDeleteStoredTable = async (id: string) => {
+    try {
+      await deleteStoredTable(id);
+      setStoredTables((prev) => prev.filter((table) => table.id !== id));
+    } catch (err) {
+      console.error('Failed to delete stored table', err);
+    }
   };
 
   return (

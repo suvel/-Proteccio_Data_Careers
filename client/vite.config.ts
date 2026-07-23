@@ -9,6 +9,7 @@ export default defineConfig({
     proxy: {
       '/process_document': 'http://localhost:3000',
       '/hello': 'http://localhost:3000',
+      '/table': 'http://localhost:3000',
     },
   },
   test: {

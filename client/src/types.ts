@@ -46,6 +46,7 @@ export interface ParsedFile {
 }
 
 export interface StoredTable {
+  id: string;
   title: string;
   tableObject: ParsedFile;
 }
