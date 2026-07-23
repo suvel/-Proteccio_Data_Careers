@@ -40,7 +40,9 @@ test.describe('Store and view stored tables', () => {
     const drawer = page.getByTestId('stored-tables-drawer');
     await expect(drawer.getByRole('heading', { name: 'Stored tables' })).toBeVisible();
 
-    const storedRow = drawer.getByTestId('stored-table-row').filter({ hasText: 'Q1 customer export' });
+    const storedRow = drawer
+      .getByTestId('stored-table-row')
+      .filter({ hasText: 'Q1 customer export' });
     await expect(storedRow).toBeVisible();
     await expect(storedRow).toContainText('show stats');
 
@@ -66,7 +68,9 @@ test.describe('Store and view stored tables', () => {
 
     await page.getByTestId('stored-tables-toggle').click();
     const drawer = page.getByTestId('stored-tables-drawer');
-    const storedRow = drawer.getByTestId('stored-table-row').filter({ hasText: 'Q1 customer export' });
+    const storedRow = drawer
+      .getByTestId('stored-table-row')
+      .filter({ hasText: 'Q1 customer export' });
     await storedRow.getByTestId('stored-table-load-btn').click();
 
     await expect(drawer).toBeHidden();
@@ -93,7 +97,9 @@ test.describe('Store and view stored tables', () => {
 
     await page.getByTestId('stored-tables-toggle').click();
     const drawer = page.getByTestId('stored-tables-drawer');
-    const storedRow = drawer.getByTestId('stored-table-row').filter({ hasText: 'Q1 customer export' });
+    const storedRow = drawer
+      .getByTestId('stored-table-row')
+      .filter({ hasText: 'Q1 customer export' });
     await expect(storedRow).toBeVisible();
 
     await storedRow.getByTestId('stored-table-drop-btn').click();
@@ -118,6 +124,8 @@ test.describe('Store and view stored tables', () => {
     await expect(page.getByTestId('result-table')).toBeVisible();
 
     await page.getByTestId('stored-tables-toggle').click();
-    await expect(page.getByTestId('stored-tables-drawer').getByText('No tables stored yet.')).toBeVisible();
+    await expect(
+      page.getByTestId('stored-tables-drawer').getByText('No tables stored yet.'),
+    ).toBeVisible();
   });
 });

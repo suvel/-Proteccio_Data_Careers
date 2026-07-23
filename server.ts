@@ -4,7 +4,12 @@ import path from 'path';
 import { errorHandler } from './middleware/errorHandler';
 import { upload } from './middleware/upload';
 import { processDocument } from './routes/processDocument';
-import { storeTable, listStoredTables, deleteStoredTable, incrementTableDownload } from './routes/storedTables';
+import {
+  storeTable,
+  listStoredTables,
+  deleteStoredTable,
+  incrementTableDownload,
+} from './routes/storedTables';
 import { PublicApiError } from './utility_function/errors';
 import { RestErrorCode } from './utility_function/constants/errorCodes';
 
