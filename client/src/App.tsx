@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ActionIcon, Alert, Container, Group, Indicator, Title } from '@mantine/core';
+import { ActionIcon, Alert, Container, Group, Indicator, Text, Title } from '@mantine/core';
 import { IconCloud } from '@tabler/icons-react';
 import { UploadForm } from './components/UploadForm';
 import { ResultTable } from './components/ResultTable';
@@ -7,7 +7,8 @@ import { SensitiveColumnsModal } from './components/SensitiveColumnsModal';
 import { TableTitlePromptModal } from './components/TableTitlePromptModal';
 import { StoredTablesDrawer } from './components/StoredTablesDrawer';
 import { getSensitiveColumnInfo, type SensitiveColumnInfo } from './utils/sensitiveColumns';
-import { storeTable, listStoredTables, deleteStoredTable } from './api/storedTables';
+import { storeTable, listStoredTables, deleteStoredTable, incrementTableDownload } from './api/storedTables';
+import { MAX_ROW_SHEET_UPLOAD, MAX_ROW_CAN_INSERT } from './constants/config';
 import type { ParsedFile, StoredTable } from './types';
 
 export function App() {
@@ -54,6 +55,20 @@ export function App() {
       setStoreModalOpened(false);
       return;
     }
+    if (result.rows.length > MAX_ROW_SHEET_UPLOAD) {
+      setStoreModalOpened(false);
+      setStoreError(
+        `This table has ${result.rows.length} rows; only tables with up to ${MAX_ROW_SHEET_UPLOAD} rows can be stored in the cloud.`
+      );
+      return;
+    }
+    if (storedTables.length + 1 > MAX_ROW_CAN_INSERT) {
+      setStoreModalOpened(false);
+      setStoreError(
+        `Cloud storage already has ${storedTables.length} table(s); storing this one would exceed the ${MAX_ROW_CAN_INSERT}-table limit.`
+      );
+      return;
+    }
     try {
       const stored = await storeTable(title, result);
       setStoredTables((prev) => [...prev, stored]);
@@ -68,9 +83,16 @@ export function App() {
     }
   };
 
-  const handleLoadStoredTable = (table: StoredTable) => {
-    handleResult(table.tableObject);
+  const handleLoadStoredTable = async (table: StoredTable) => {
     setDrawerOpened(false);
+    try {
+      const updated = await incrementTableDownload(table.id);
+      setStoredTables((prev) => prev.map((t) => (t.id === updated.id ? updated : t)));
+      handleResult(updated.tableObject);
+    } catch (err) {
+      console.error('Failed to update download count', err);
+      handleResult(table.tableObject);
+    }
   };
 
   const handleDeleteStoredTable = async (id: string) => {

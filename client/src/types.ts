@@ -43,6 +43,7 @@ export interface ParsedFile {
   rows: Row[];
   colAttributes: ColumnAttributes[];
   duplicateRows?: Record<string, number[]>;
+  download_count: number;
 }
 
 export interface StoredTable {

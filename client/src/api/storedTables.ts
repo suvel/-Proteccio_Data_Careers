@@ -36,6 +36,17 @@ export async function listStoredTables(): Promise<StoredTable[]> {
   return stored.map((table) => ({ ...table, tableObject: reviveParsedFile(table.tableObject) }));
 }
 
+export async function incrementTableDownload(id: string): Promise<StoredTable> {
+  const response = await fetch(`/table/${id}/download`, { method: 'POST' });
+
+  if (!response.ok) {
+    throw new Error(await parseErrorMessage(response, 'Failed to update download count'));
+  }
+
+  const stored = (await response.json()) as StoredTable;
+  return { ...stored, tableObject: reviveParsedFile(stored.tableObject) };
+}
+
 export async function deleteStoredTable(id: string): Promise<void> {
   const response = await fetch(`/table/${id}`, { method: 'DELETE' });
 

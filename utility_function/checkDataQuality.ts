@@ -33,6 +33,12 @@ export function checkDataQuality(parsedFile: ParsedFile): ParsedFile {
     headers: parsedFile.headers,
     rows,
     colAttributes: [],
+    download_count: parsedFile.download_count,
   });
-  return { headers: parsedFile.headers, rows, colAttributes };
+  return {
+    headers: parsedFile.headers,
+    rows,
+    colAttributes,
+    download_count: parsedFile.download_count,
+  };
 }

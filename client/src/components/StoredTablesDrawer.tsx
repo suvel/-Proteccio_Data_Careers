@@ -61,7 +61,8 @@ export function StoredTablesDrawer({
                     <Text fw={600}>{table.title}</Text>
                     <Group gap="xs">
                       <Text size="sm" c="dimmed">
-                        {table.tableObject.rows.length} rows · {isExpanded ? 'hide' : 'show'} stats
+                        {table.tableObject.rows.length} rows ·{' '}
+                        {isExpanded ? 'hide' : 'show'} stats
                       </Text>
                       <ActionIcon
                         variant="light"
@@ -73,7 +74,7 @@ export function StoredTablesDrawer({
                           onLoad(table);
                         }}
                       >
-                        <IconDownload size={16} />
+                        <IconDownload size={16} />{" "}{table.tableObject.download_count??'0'}
                       </ActionIcon>
                       <ActionIcon
                         variant="light"

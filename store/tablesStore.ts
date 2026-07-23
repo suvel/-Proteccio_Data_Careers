@@ -39,6 +39,38 @@ export async function listTables(): Promise<StoredTable[]> {
   return rows as StoredTableRow[];
 }
 
+export async function incrementDownloadCount(id: string): Promise<StoredTable | null> {
+  const { data: existing, error: fetchError } = await supabase
+    .from(STORED_TABLES_TABLE)
+    .select('id, title, tableObject')
+    .eq('id', id)
+    .maybeSingle();
+  if (fetchError) {
+    throw fetchError;
+  }
+  if (!existing) {
+    return null;
+  }
+
+  const row = existing as StoredTableRow;
+  const tableObject: ParsedFile = {
+    ...row.tableObject,
+    download_count: (row.tableObject.download_count ?? 0) + 1,
+  };
+
+  const { data, error } = await supabase
+    .from(STORED_TABLES_TABLE)
+    .update({ tableObject })
+    .eq('id', id)
+    .select('id, title, tableObject')
+    .single();
+  if (error) {
+    throw error;
+  }
+
+  return data as StoredTableRow;
+}
+
 export async function deleteTable(id: string): Promise<boolean> {
   const { data: deletedRows, error } = await supabase
     .from(STORED_TABLES_TABLE)
