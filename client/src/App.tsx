@@ -41,6 +41,15 @@ export function App() {
     handleClearView();
   };
 
+  const handleLoadStoredTable = (table: StoredTable) => {
+    handleResult(table.tableObject);
+    setDrawerOpened(false);
+  };
+
+  const handleDeleteStoredTable = (index: number) => {
+    setStoredTables((prev) => prev.filter((_, i) => i !== index));
+  };
+
   return (
     <Container size="lg" py="xl">
       <Group justify="space-between" mb="lg">
@@ -84,6 +93,8 @@ export function App() {
         opened={drawerOpened}
         onClose={() => setDrawerOpened(false)}
         tables={storedTables}
+        onLoad={handleLoadStoredTable}
+        onDelete={handleDeleteStoredTable}
       />
     </Container>
   );

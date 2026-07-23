@@ -46,6 +46,49 @@ test.describe('Store and view stored tables', () => {
     await expect(storedRow).toContainText('hide stats');
   });
 
+  test('Load button loads the stored table into the main view and closes the drawer', async ({
+    page,
+  }) => {
+    await page.goto('/');
+    await page.locator('input[type="file"]').setInputFiles(CSV_FIXTURE);
+    await page.getByTestId('process-document-btn').click();
+    await expect(page.getByTestId('result-table')).toBeVisible();
+
+    await page.getByTestId('store-in-cloud-btn').click();
+    await page.getByTestId('store-title-input').fill('Q1 customer export');
+    await page.getByTestId('store-confirm-btn').click();
+    await expect(page.getByTestId('result-table')).toBeHidden();
+
+    await page.getByTestId('stored-tables-toggle').click();
+    const drawer = page.getByTestId('stored-tables-drawer');
+    const storedRow = drawer.getByTestId('stored-table-row').filter({ hasText: 'Q1 customer export' });
+    await storedRow.getByTestId('stored-table-load-btn').click();
+
+    await expect(drawer).toBeHidden();
+    await expect(page.getByTestId('result-table')).toBeVisible();
+  });
+
+  test('Drop button removes the stored table from the list', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('input[type="file"]').setInputFiles(CSV_FIXTURE);
+    await page.getByTestId('process-document-btn').click();
+    await expect(page.getByTestId('result-table')).toBeVisible();
+
+    await page.getByTestId('store-in-cloud-btn').click();
+    await page.getByTestId('store-title-input').fill('Q1 customer export');
+    await page.getByTestId('store-confirm-btn').click();
+
+    await page.getByTestId('stored-tables-toggle').click();
+    const drawer = page.getByTestId('stored-tables-drawer');
+    const storedRow = drawer.getByTestId('stored-table-row').filter({ hasText: 'Q1 customer export' });
+    await expect(storedRow).toBeVisible();
+
+    await storedRow.getByTestId('stored-table-drop-btn').click();
+
+    await expect(storedRow).toBeHidden();
+    await expect(drawer.getByText('No tables stored yet.')).toBeVisible();
+  });
+
   test('Cancel on the store modal discards the title and keeps the table unstored', async ({
     page,
   }) => {
