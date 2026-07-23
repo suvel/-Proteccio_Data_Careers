@@ -1,6 +1,6 @@
 import request from 'supertest';
 import app from '../server';
-import { clearTables } from '../store/tablesStore';
+import { clearTables } from '../services/tableStore';
 import { MAX_ROW_SHEET_UPLOAD, MAX_ROW_CAN_INSERT } from '../utility_function/constants/config';
 
 const sampleTableObject = {

@@ -17,10 +17,6 @@ const app = express();
 
 app.use(express.json({ limit: '10mb' }));
 
-app.get('/hello', (_req, res) => {
-  res.json({ message: 'Hello, world!' });
-});
-
 app.post('/process_document', upload.single('file'), processDocument);
 
 app.post('/table', storeTable);

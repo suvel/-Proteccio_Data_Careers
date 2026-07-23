@@ -19,13 +19,6 @@ export function computeColumnConsistencyScore(header: Header, rows: Row[]): Colu
   const dataType = mostCommonDataType(nonMissing.length > 0 ? nonMissing : cells);
   const matching = nonMissing.filter((cell) => cell.data_type === dataType);
 
-  console.log({
-    header_id: header.header_id,
-    dataType,
-    matching: matching.length,
-    total: nonMissing.length,
-  });
-
   const consistencyScore = (100 * matching.length) / nonMissing.length;
   return { header_id: header.header_id, consistencyScore };
 }

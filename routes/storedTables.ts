@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { addTable, deleteTable, incrementDownloadCount, listTables } from '../store/tablesStore';
+import { addTable, deleteTable, incrementDownloadCount, listTables } from '../services/tableStore';
 import { validateParsedFile } from '../utility_function/helpers';
 import { PublicApiError, toPublicApiError } from '../utility_function/errors';
 import { RestErrorCode } from '../utility_function/constants/errorCodes';
