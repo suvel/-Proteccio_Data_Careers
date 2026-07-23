@@ -49,8 +49,6 @@ test.describe('Row/table limit handling', () => {
     await page.getByTestId('process-document-btn').click();
     await expect(page.getByTestId('result-table')).toBeVisible();
 
-    await expect(page.getByTestId('cloud-storage-usage')).toContainText('5/5 tables stored in cloud');
-
     await page.getByTestId('store-in-cloud-btn').click();
     await page.getByTestId('store-title-input').fill('One too many');
     await page.getByTestId('store-confirm-btn').click();

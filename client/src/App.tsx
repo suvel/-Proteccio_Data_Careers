@@ -128,9 +128,6 @@ export function App() {
         showStoreButton={!!result}
         onStoreClick={() => setStoreModalOpened(true)}
       />
-      <Text size="sm" c="dimmed" mt="xs" data-testid="cloud-storage-usage">
-        {storedTables.length}/{MAX_ROW_CAN_INSERT} tables stored in cloud
-      </Text>
       {storeError && (
         <Alert color="red" mt="md" title="Failed to store table" mb="md" data-testid="store-table-error-alert">
           {storeError}
