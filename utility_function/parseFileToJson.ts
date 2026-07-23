@@ -181,7 +181,7 @@ export function parseFileToJson(filePath: string): ParsedFile {
   });
 
   if (rowsAoA.length === 0) {
-    return { headers: [], rows: [], colAttributes: [] };
+    return { headers: [], rows: [], colAttributes: [], download_count: 0 };
   }
 
   const [headerRow, ...dataRows] = rowsAoA;
@@ -197,5 +197,5 @@ export function parseFileToJson(filePath: string): ParsedFile {
     return row;
   });
 
-  return { headers, rows, colAttributes: [] };
+  return { headers, rows, colAttributes: [], download_count: 0 };
 }
