@@ -31,6 +31,12 @@ I zip the below files
 
 ```
 
+## Pointer for were unable to covered in Assignments 😓
+
+* Did not test the for application with file more that 100 rows
+* Unable calculate score to objectify the uploaed file
+
+
 
 ## Thought that went into developing the application captured
 
