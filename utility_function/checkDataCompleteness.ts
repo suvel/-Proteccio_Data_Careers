@@ -9,6 +9,7 @@ import {
   mostCommonDataType,
   validateParsedFile,
 } from './helpers';
+import { computeColumnQualityScore } from './computeQualityScore';
 
 /**
  * Computes standard deviation, bias, and date-range completeness for one column.
@@ -27,6 +28,7 @@ function computeColumnAttributes(header: Header, rows: Row[]): ColumnAttributes 
     header_id: header.header_id,
     data_type: dataType,
     isBiased: false,
+    qualityScore: computeColumnQualityScore(header, rows).qualityScore,
   };
   if (nonMissing.length === 0) return attrs;
 

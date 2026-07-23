@@ -36,6 +36,7 @@ export interface ColumnAttributes {
   max_value?: number;
   average_value?: number;
   topValues?: TopValueEntry[];
+  qualityScore: number;
 }
 
 export interface ParsedFile {
