@@ -58,6 +58,19 @@ that majority type:
 consistencyScore = 100 * (cells matching the column's majority data type) / (non-missing cells in the column)
 ```
 
+## Upload and storage limits
+
+The application controls how many rows can be uploaded in a sheet and how many rows can be stored in the cloud through two constants:
+
+```
+utility_function/constants/config.ts
+client\src\constants\config.ts
+
+MAX_ROW_SHEET_UPLOAD = 100; // max rows allowed in a single uploaded sheet
+MAX_ROW_CAN_INSERT = 5;     // max rows allowed to be stored in the cloud (across inserts)
+
+```
+
 ## Pointer for were unable to covered in Assignments 😓
 
 - Did not test the for application with file more that 100 rows
