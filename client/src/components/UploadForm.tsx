@@ -1,13 +1,16 @@
 import { useState } from 'react';
-import { Alert, Button, FileInput, Group, Loader } from '@mantine/core';
+import { Alert, Button, FileInput, Group } from '@mantine/core';
+import { IconCloudUpload } from '@tabler/icons-react';
 import { processDocument } from '../api/processDocument';
 import type { ParsedFile } from '../types';
 
 interface UploadFormProps {
   onResult: (result: ParsedFile) => void;
+  showStoreButton: boolean;
+  onStoreClick: () => void;
 }
 
-export function UploadForm({ onResult }: UploadFormProps) {
+export function UploadForm({ onResult, showStoreButton, onStoreClick }: UploadFormProps) {
   const [file, setFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -19,6 +22,7 @@ export function UploadForm({ onResult }: UploadFormProps) {
     try {
       const result = await processDocument(file);
       onResult(result);
+      setFile(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to process document');
     } finally {
@@ -36,13 +40,28 @@ export function UploadForm({ onResult }: UploadFormProps) {
           value={file}
           onChange={setFile}
           w={320}
+          data-testid="file-input"
         />
-        <Button onClick={handleSubmit} disabled={!file || loading}>
-          {loading ? <Loader size="xs" color="white" /> : 'Process document'}
+        <Button
+          loading={loading}
+          onClick={handleSubmit}
+          disabled={!file || loading}
+          data-testid="process-document-btn"
+        >
+          Process document
         </Button>
+        {showStoreButton && (
+          <Button
+            onClick={onStoreClick}
+            leftSection={<IconCloudUpload size={18} />}
+            data-testid="store-in-cloud-btn"
+          >
+            Store in Cloud
+          </Button>
+        )}
       </Group>
       {error && (
-        <Alert color="red" title="Error" mt="md">
+        <Alert color="red" title="Error" mt="md" data-testid="upload-error-alert">
           {error}
         </Alert>
       )}

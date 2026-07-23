@@ -7,7 +7,7 @@ const DATE_LIKE_TYPES = new Set(['Date', 'Time', 'DateTime']);
  * server as ISO strings. Revive them back into Date instances using the
  * data_type tag already present on each cell.
  */
-function reviveParsedFile(parsed: ParsedFile): ParsedFile {
+export function reviveParsedFile(parsed: ParsedFile): ParsedFile {
   for (const row of parsed.rows) {
     for (const cell of Object.values(row)) {
       if (DATE_LIKE_TYPES.has(cell.data_type) && typeof cell.value === 'string') {

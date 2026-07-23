@@ -9,10 +9,12 @@ export default defineConfig({
     proxy: {
       '/process_document': 'http://localhost:3000',
       '/hello': 'http://localhost:3000',
+      '/table': 'http://localhost:3000',
     },
   },
   test: {
     environment: 'node',
     globals: true,
+    exclude: ['**/node_modules/**', 'e2e/**'],
   },
 });

@@ -40,6 +40,7 @@ export function SensitiveColumnsModal({
       closeOnClickOutside={false}
       closeOnEscape={false}
       withCloseButton={false}
+      data-testid="sensitive-columns-modal"
     >
       <Stack gap="sm">
         <Text size="sm" c="dimmed">
@@ -67,7 +68,7 @@ export function SensitiveColumnsModal({
             />
           );
         })}
-        <Button onClick={handleConfirm} mt="sm">
+        <Button onClick={handleConfirm} mt="sm" data-testid="confirm-sensitive-columns-btn">
           Confirm
         </Button>
       </Stack>

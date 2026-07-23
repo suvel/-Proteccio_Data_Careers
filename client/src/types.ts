@@ -44,3 +44,9 @@ export interface ParsedFile {
   colAttributes: ColumnAttributes[];
   duplicateRows?: Record<string, number[]>;
 }
+
+export interface StoredTable {
+  id: string;
+  title: string;
+  tableObject: ParsedFile;
+}
